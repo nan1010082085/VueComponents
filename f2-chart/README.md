@@ -1,5 +1,5 @@
 #### f2-chant 使用
-
+> `*使用中按自身需求修改组件内容!!`
 1. npm i @antv/f2 -S 安装图表
 2. 复制 f2.js 到 工程中 App.vue 同级目录下
 3. 打开 main.js 复制代码到 工程共 main.js
@@ -60,3 +60,10 @@ template 中
                 }
               }
 ```
+> pie 使用
+```
+template:
+ <vF2Pie id="mountNode2" :r-data="f2Data2" name="流入资金"></vF2Pie>
+```
+* name 为过滤数据中不展示字段 string 限制只能过滤一个
+* unit 饼图右侧标题 对应 数据单位 默认 '元'

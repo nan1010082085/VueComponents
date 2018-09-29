@@ -74,7 +74,6 @@
           this.chart.scale([ 'value' ], {
             tickCount : this.xScale,
             formatter : function formatter ( ivalue ) {
-              console.log(ivalue);
               return ivalue
             }
           });
@@ -100,15 +99,19 @@
               let coord = that.chart.get('coord');
               let title = tooltipItems[ 0 ].title;
               that.$nextTick(_=>{
+                try {
                 that.$refs.dateTop.innerHTML = title;
                 that.$refs.dateTop.setAttribute('style',`visibility:visible;left:${obj.x}px;top:${coord.start.y}px`)
+                }catch ( e ) {}
 							})
             },
             onHide : function onHide () {
               let legend = that.chart.get('legendController').legends.top[ 0 ];
               legend.setItems(that.chart.getLegendItems().country);
               that.$nextTick(_=>{
-                that.$refs.dateTop.removeAttribute('style')
+                try {
+                  that.$refs.dateTop.removeAttribute('style')
+                }catch ( e ) {}
               })
             }
           });
