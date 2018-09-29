@@ -28,3 +28,35 @@ template 中
 * type  对比名字
 * x-scake x轴展示数值展示个数
 * y-scake y轴展示数值展示个数
+
+> 示例 
+```
+ let roleData = response.data.data
+ let In = [], to = [], price = []; //展示的每一项
+              if ( roleData ) {
+                roleData.in.forEach(( item, index ) => {
+                  In[ index ] = {
+                    type : '流入',
+                    date : item.date,
+                    value : item.amount
+                  }
+                  price[ index ] = {
+                    type : '余额增长',
+                    date : item.date,
+                  }
+                })
+                roleData.out.forEach(( item, index ) => {
+                  to[ index ] = {
+                    type : '流出',
+                    date : item.date,
+                    value : item.amount
+                  }
+                })
+                price.map((item,index)=>{ //某一项需要其中两项计算
+                  item['value'] = (roleData.in[index].amount - roleData.out[index].amount).toFixed(2)
+                })
+                if ( In.length > 0 && to.length > 0 && price.length > 0 ) {
+                  this.f2Data1 = [ ...In, ...to, ...price ] //...扩展运算 合并为一个数组
+                }
+              }
+```
