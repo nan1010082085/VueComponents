@@ -1,5 +1,5 @@
 # loadmore
-#####参考 mint-ui
+#####参考 mint-ui 样式参考 weui.css
 * template
 ```
 <div ref="moreScroll" class="asset-list_body h94vh">
