@@ -57,7 +57,13 @@
             id : this.id,
           });
           this.chart.source(arg);
-          this.chart.scale([ 'value' ], {
+          this.chart.scale('date', {
+            // type : 'timeCat',
+            // mask : 'MM-DD',
+            tickCount : this.xScale,
+          });
+          this.chart.scale('value', {
+            tickCount : this.yScale,
             formatter : function formatter ( ivalue ) {
               return ivalue
             }

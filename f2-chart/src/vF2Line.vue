@@ -55,8 +55,8 @@
             mask : 'MM-DD',
             tickCount : this.xScale,
           });
-          this.chart.scale([ 'value' ], {
-            tickCount : this.xScale,
+          this.chart.scale('value', {
+            tickCount : this.yScale,
             formatter : function formatter ( ivalue ) {
               return ivalue
             }

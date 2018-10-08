@@ -26,7 +26,8 @@
     props : {
       id : { type : String, default : '' },
       'r-data' : { type : Array, default : [] },
-			'name':{ type : String, default : ''}
+			'name':{ type : String, default : ''},
+			'unit':{ type : String, default : '元'}
     },
     data () {
       return {
@@ -49,7 +50,7 @@
         let map = {};
         arg.map(obj =>{
           obj.value = Number(obj.value)
-          map[obj.type] = obj.value + ' 元'
+          map[obj.type] = obj.value + ' '+this.unit
 				});
         if(this.name != ''){
           arg =	arg.filter(data =>{ if(data.type != this.name){ return data}})
