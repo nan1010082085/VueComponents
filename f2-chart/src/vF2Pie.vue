@@ -1,4 +1,4 @@
-<!-- 堆积折线图 -->
+<!-- 饼图 -->
 <template>
 	<div class="vF2-line">
 		<canvas :id="id"></canvas>
@@ -39,7 +39,9 @@
       'rData' ( arg ) {
         if ( Array.isArray(arg) && arg.length > 0 ) {
           this.$nextTick(_ => {
-            this.init(arg)
+            if ( document.querySelector(`#${this.id}`) ) {
+              this.init(arg)
+            }
           })
         }
       }

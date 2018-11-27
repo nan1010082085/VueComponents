@@ -53,7 +53,9 @@
       'rData' ( arg ) {
         if ( Array.isArray(arg) && arg.length > 0 ) {
           this.$nextTick(_ => {
-            this.init(arg)
+            if ( document.querySelector(`#${this.id}`) ) {
+              this.init(arg)
+            }
           })
         }
       }
