@@ -2,11 +2,56 @@
 	<div class="search">
 		<div class="search-bacground" :class="{w85:visibleInput}" @click="showInput">
 			<Icon class="icon" name="search" :class="{pl8:visibleInput}"></Icon>
-			<input placeholder="输入设备唯一码或场地"  :class="{w80:visibleInput}" type="text" v-model="value" ref="inputSearch" @blur="inpHidden">
+			<input placeholder="输入vlaue"  :class="{w80:visibleInput}" type="text" v-model="value" ref="inputSearch" @blur="inpHidden">
 		</div>
 		<p class="search-close" :class="{inlineBlock:visibleInput,none:!visibleInput}" @click="inpHidden">取消</p>
 	</div>
 </template>
+<script>
+  import {Icon} from 'vant'
+  export default {
+    name : "",
+    mixins : [],
+    props : {},
+    components : {Icon},
+    data () {
+      return {
+        value:'',
+        visibleInput: false
+      }
+    },
+    computed : {},
+    watch : {
+      visibleInput(bool){
+        if(bool){
+          this.$refs.inputSearch.setAttribute('autofocus','autofocus');
+        }else {
+          this.$refs.inputSearch.removeAttribute('autofocus')
+        }
+      },
+    },
+    methods : {
+      showInput(){
+        this.visibleInput = true;
+        console.log(this.$refs.inputSearch);
+      },
+      inpHidden(){
+        this.visibleInput = false;
+      },
+    },
+    mounted () {
+    },
+    created () {
+    },
+    filters : {},
+    beforeDestroy () {
+      //vue实例正在被销毁,还可以调用this,data
+    },
+    destroyed () {
+      //vue实例被销毁了
+    }
+  }
+</script>
 <style scoped lang="less" type="text/less">
 	.search{
 		padding: 10px;
@@ -74,48 +119,3 @@
 		transition: opacity .2s ease .2s;
 	}
 </style>
-<script>
-  import {Icon} from 'vant'
-  export default {
-    name : "",
-    mixins : [],
-    props : {},
-    components : {Icon},
-    data () {
-      return {
-        value:'',
-        visibleInput: false
-      }
-    },
-    computed : {},
-    watch : {
-      visibleInput(bool){
-        if(bool){
-          this.$refs.inputSearch.setAttribute('autofocus','autofocus');
-        }else {
-          this.$refs.inputSearch.removeAttribute('autofocus')
-        }
-      },
-    },
-    methods : {
-      showInput(){
-        this.visibleInput = true;
-        console.log(this.$refs.inputSearch);
-      },
-      inpHidden(){
-        this.visibleInput = false;
-      },
-    },
-    mounted () {
-    },
-    created () {
-    },
-    filters : {},
-    beforeDestroy () {
-      //vue实例正在被销毁,还可以调用this,data
-    },
-    destroyed () {
-      //vue实例被销毁了
-    }
-  }
-</script>

@@ -1,4 +1,4 @@
-<!-- 堆积折线图 -->
+<!-- 柱状图 -->
 <template>
 	<div class="vF2-line">
 		<canvas :id="id"></canvas>

@@ -8,23 +8,17 @@
 			right-text="确定"
 			@click-right="onConfirm">
 		</NavBar>
-		<div id="container"></div>
-		<div class="scroll-container-hei-500">
-			<Row v-if="getNearPois" class="bgf ptb08 plr15 mt03 mb03" v-for="item,index in getNearPois" :key="index"
-					 @click.native="handleCheck(item,index)">
-				<Col :span="24" class="map-li">
-					<p class="fz14 fw600">{{item.name}}</p>
-					<span class="fz12 mt03 c7c7">{{item.address}}</span>
-					<!--<Icon v-if="item.check" class="icon csuc fz16" name="checked"></Icon>-->
-					<div v-if="item.check" class="icon">
-						<div class="icon-r"></div>
-					</div>
-				</Col>
-			</Row>
-		</div>
+		<iframe id="mapPage" frameborder=0
+						src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=your key&referer=vMap">
+		</iframe>
 	</div>
 </template>
 <style scoped lang="less" type="text/less">
+	#mapPage {
+		width: 100vw;
+		height: calc(100vh - 50px);
+	}
+
 	#container {
 		width: 100vw;
 		height: 200px;
@@ -56,8 +50,8 @@
 	}
 </style>
 <script>
-	import {mapMutations} from 'vuex'
-	import {MAP_DATA}     from "../store/mutations-types";
+  import { mapMutations,mapState } from 'vuex'
+  import { MAP_DATA }     from "../store/mutations-types";
 
   export default {
     name : "",
@@ -66,128 +60,86 @@
     components : {},
     data () {
       return {
-        map : '',
         geocoder : '',
         latlng : '',
-        address : {},
 
         roleForm : {
           country : '', //国家
           province : '', //省
           city : '', //市
           area : '', //县
+          longitude : '', //经度
+          latitude : '', //纬度
           mer_address : ''
         }
       }
     },
     computed : {
-      getNearPois () {
-        return this.address.nearPois ? this.address.nearPois : null
-      }
+			...mapState({
+				mapData: state => state.map
+			})
     },
     watch : {},
     methods : {
-			...mapMutations([
-			  MAP_DATA
-			]),
+      ...mapMutations([
+        MAP_DATA
+      ]),
       back () {
-        this.$router.push({ name : this.$route.query.back })
+        this.$router.push({ name : this.$route.query.back, query : { type : this.$route.query.type } })
       },
       onConfirm () {
         if ( this.roleForm.mer_address == '' ) {
           this.$toast({ position : 'bottom', message : '点击列表选择详细地址' })
           return
         }
-				this[MAP_DATA](this.roleForm)
+        this[ MAP_DATA ](this.roleForm)
         // alert(JSON.stringify(this.roleForm))
-				this.$router.push({name:this.$route.query.back})
+        this.$router.push({ name : this.$route.query.back, query : { type : this.$route.query.type } })
       },
-      handleCheck ( item, index ) {
-        let list = this.address.nearPois;
-        for ( let i = 0 ; i < list.length ; i++ ) {
-          const listElement = list[ i ];
-          if ( listElement.check ) {
-            listElement.check = false
-          }
-        }
-        if ( item.check == false || item.check == null || item.check == undefined ) {
-          this.$set(item, 'check', true)
-          this.roleForm.mer_address = item.address + item.name;
-        } else {
-          this.$set(item, 'check', false)
-          this.roleForm.mer_address = '';
-        }
-      },
-      getLocation () {
+      getLocations () {
         let that = this;
-        //判断是否支持 获取本地位置
-        if ( navigator.geolocation ) {
-          // console.log(navigator.geolocation);
-          navigator.geolocation.getCurrentPosition(function ( position ) {
-            // console.log(position)
-            that.showPosition(position)
-          }, function ( err ) {
-            // console.log(err, 'err');
-            if ( err.code == 1 ) {
-              that.$toast({ position : 'bottom', message : '用户禁止了地理位置访问' })
-            } else if ( err.code == 2 ) {
-              that.$toast({ position : 'bottom', message : '当前浏览器无响应' })
-            }
+        window.addEventListener('message', that.showPosition, false);
+      },
+      showPosition ( event ) {
+        // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
+        let that = this;
+        let loc = event.data;
+        if ( loc && loc.module == 'locationPicker' ) {//防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
+          // console.log('location', loc);
+          // alert(JSON.stringify(loc))
+					if(Object.getOwnPropertyNames(this.mapData).length <= 1){
+            that.coord = new qq.maps.LatLng(loc.latlng.lat,loc.latlng.lng);
+					}else {
+            that.coord = new qq.maps.LatLng(this.mapData.latitude,this.mapData.longitude);
+					}
 
-          });
-        }
-        else {
-          this.$toast({ position : 'bottom', message : '当前浏览器不支持定位,请手动输入位置信息' })
+
+					that.Geocoder(that.coord)
+
+          that.roleForm.mer_address = loc.poiaddress;
+          that.roleForm.longitude = loc.latlng.lng; //经度
+          that.roleForm.latitude = loc.latlng.lat; //纬度
         }
       },
-      showPosition ( position ) {
+			Geocoder(coord){
         let that = this;
-        // alert(position.coords.latitude)
-        let lat = position.coords.latitude;
-        let lng = position.coords.longitude;
-        //调用地图命名空间中的转换接口   type的可选值为 1:GPS经纬度，2:搜狗经纬度，3:百度经纬度，4:mapbar经纬度，5:google经纬度，6:搜狗墨卡托
-        qq.maps.convertor.translate(new qq.maps.LatLng(lat, lng), 1, function ( res ) {
-          // alert(res[0])
-          //取出经纬度并且赋值
-          that.latlng = res[ 0 ];
-
-          that.map = new qq.maps.Map(document.getElementById("container"), {
-            center : that.latlng,
-            zoom : 13
-          });
-          //设置marker标记
-          let marker = new qq.maps.Marker({
-            map : that.map,
-            position : that.latlng
-          });
-        });
-
-        that.geocoder = new qq.maps.Geocoder({
-          complete : function ( result ) {
-            // alert(JSON.stringify(result.detail))
-            result.detail.nearPois[ 0 ].check = true;
-            that.address = result.detail
-            let addressComponents = result.detail.addressComponents;
-            let normal = result.detail.nearPois[ 0 ].address + result.detail.nearPois[ 0 ].name;
-            that.roleForm.country = addressComponents.country;
-            that.roleForm.province = addressComponents.province;
-            that.roleForm.city = addressComponents.city;
-            that.roleForm.area = addressComponents.district;
-            that.roleForm.mer_address = normal;
-
-            that.map.setCenter(result.detail.location);
+        this.geocoder = new qq.maps.Geocoder({
+          complete:function(result){
+            // console.log('成功：',result.detail);
+						let loc = result.detail.addressComponents
+            that.roleForm.country = loc.country; //国家
+            that.roleForm.province = loc.province; //省
+            that.roleForm.city = loc.city; //市
+            that.roleForm.area = loc.district; //县
           }
         });
 
-
-        window.setTimeout(_ => {
-          that.geocoder.getAddress(this.latlng)
-        }, 500)
-      }
+        this.geocoder.getAddress(coord);
+			},
     },
     mounted () {
       this.$nextTick(_ => {
-        this.getLocation();
+        this.getLocations();
       })
     },
     created () {
