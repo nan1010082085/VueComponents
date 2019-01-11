@@ -1,6 +1,7 @@
 # vue-components
 常用的vue组件
 > 20190111
+    * 增加 swipe点击判断
     * 增加组件 swipe swipe-item 滚动组件
 > 20181127 
     * 增加插件 loader 加载状态条插件  目录plugins/loader

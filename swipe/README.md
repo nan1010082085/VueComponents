@@ -4,7 +4,8 @@
 			class-name="swipeloop"
 			:loop="true"
 			:swiper-index="1"
-			@change="handleSwipeLoopChange">
+			@change="handleSwipeLoopChange"
+			@click="handleClick">
 			<SwipeLoopItem v-if="scrollData" v-for="(item,index) in scrollData" :key="index">
 				<div class="loop-item-image"
 						 :class="{'loop-item-image-active':swiperIndex == index}"
@@ -19,6 +20,7 @@
 > loop 是否自动滚动
 > swiper-index 初始化显示第几个
 > change 滚动到那张 回调 index
+> click 点击事件
 ```
 import SwipeLoop      from './swipe/Swipe'
 import SwipeLoopItem  from './swipe/SwipeItem'

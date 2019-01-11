@@ -1,9 +1,9 @@
 <template>
 	<div class="swipe">
 		<div class="swipe-scroll" :class="className"
-				 @touchstart="handlestart"
-				 @touchmove="handlemove"
-				 @touchend="handleend">
+				 @touchstart.prevent="handlestart"
+				 @touchmove.prevent="handlemove"
+				 @touchend.prevent="handleend">
 			<slot/>
 		</div>
 	</div>
@@ -25,7 +25,7 @@
     data () {
       return {
         childrenWidth : 0,
-
+				click:false,
         sweep : -665,
         scrollWidth : 0,
         swipeItemActive : 1,
@@ -77,25 +77,26 @@
       },
 
       handlestart ( ev ) {
-        ev = ev || event;
-        ev.preventDefault();
         //控制器清除
         this.loops = false;
 				clearInterval(this.INTER);
 				clearTimeout(this.startInvter);
 
         this.start =  ev.touches[0].clientX;
+        this.click = false;
       },
       handlemove ( ev ) {
-        ev = ev || event;
-        ev.preventDefault();
+        this.click = true;
         let scroll = document.querySelector(`.${this.className}`)
         this.move = ev.touches[0].clientX - this.start
         scroll.style =`transform:translateX(${this.sweep + this.move}px);width:${this.scrollWidth}`
       },
       handleend ( ev ) {
-        ev = ev || event;
-        ev.preventDefault();
+				if(!this.click){
+				  this.handleClick()
+				  return
+				}
+
         let scroll = document.querySelector(`.${this.className}`)
         //手指离开 自动移动位置
         this.swipeItemActive = -Math.round((this.sweep + this.move) / (this.childrenWidth - 15))
@@ -114,6 +115,10 @@
 				  this.init(scroll)
 				},500)
       },
+      handleClick(){
+        console.log('click')
+        this.$emit('click')
+			},
     },
     mounted () {
       this.$nextTick(()=>{
