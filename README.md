@@ -1,9 +1,12 @@
 # vue-components
 常用的vue组件
+> 20190111
+    * 增加 swipe点击判断
+    * 增加组件 swipe swipe-item 滚动组件
 > 20181127 
-    增加插件 loader 加载状态条插件  目录plugins/loader
-    增加 f2图表 柱状平移图 饼图文本图
-    修改vMap 使用腾讯iframe获取位置信息组件 需要key
+    * 增加插件 loader 加载状态条插件  目录plugins/loader
+    * 增加 f2图表 柱状平移图 饼图文本图
+    * 修改vMap 使用腾讯iframe获取位置信息组件 需要key
     * loader/index.js
 
 > 20181106 增加 导出excel

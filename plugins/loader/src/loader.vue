@@ -48,14 +48,14 @@
         that.span.style.transform = `translate3d(${-100 + 100}%,0,0)`;
         let finishTimeout = setTimeout(() => {
           that.$el.style.opacity = '0';
-          that.$el.style.transition = 'all .4s ease 0s';
+          that.$el.style.transition = 'transform .4s ease 0s';
           clearTimeout(finishTimeout);
         }, 300)
       }
     },
     props : {
-      'bg-color' : { type : String, default : '#297dff' },
-      'height' : { type : String, default : '3px' }
+      'bg-color' : String,
+      'height' : String
     },
     data () {
       return {

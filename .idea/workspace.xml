@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
+=======
   <component name="ChangeListManager">
     <list default="true" id="52859c68-107b-4216-94c2-ad2cf7f723db" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
@@ -55,17 +57,37 @@
       </list>
     </option>
   </component>
+>>>>>>> 13227c855ddfeec7a7a5668c170d4df44f1c4fa0
   <component name="JsBowerSettings">
     <node-interpreter value="project" />
     <bower-package value="" />
     <bower.json value="" />
   </component>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+>>>>>>> 13227c855ddfeec7a7a5668c170d4df44f1c4fa0
+>>>>>>> f145d58a5e596b71781bea3b5ced8a955f42cade
   <component name="JsFlowSettings">
     <service-enabled>true</service-enabled>
     <exe-path />
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  <component name="PropertiesComponent">
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+=======
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+>>>>>>> f145d58a5e596b71781bea3b5ced8a955f42cade
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="width" value="1936" />
@@ -93,12 +115,23 @@
   <component name="PropertiesComponent">
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+>>>>>>> 13227c855ddfeec7a7a5668c170d4df44f1c4fa0
     <property name="node.js.path.for.package.prettier" value="project" />
     <property name="node.js.path.for.package.stylelint" value="project" />
     <property name="node.js.selected.package.prettier" value="" />
     <property name="node.js.selected.package.stylelint" value="" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="E:/nodejs/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+<<<<<<< HEAD
+    <property name="settings.editor.selected.configurable" value="editor.preferences.gutterIcons" />
+    <property name="settings.editor.splitter.proportion" value="0.22053231" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="masterDetails">
+    <states>
+=======
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="settings.editor.splitter.proportion" value="0.22053231" />
@@ -287,6 +320,7 @@
           </splitter-proportions>
         </settings>
       </state>
+>>>>>>> 13227c855ddfeec7a7a5668c170d4df44f1c4fa0
       <state key="ScopeChooserConfigurable.UI">
         <settings>
           <splitter-proportions>
