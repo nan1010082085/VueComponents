@@ -6,8 +6,8 @@
 <script>
 	/*
 	 * props
-	 * 	@params bgColor 控制加载状态条背景色
-	 * 	@params height 控制加载状态条高度
+	 * 	@params bgColor 控制加载状态条背景色 默认 #297dff
+	 * 	@params height 控制加载状态条高度  默认 3px
 	 * methods
 	 * 	@params init  存储元素
 	 * 	@params start 开始加载 -> 无完成时最大80%
@@ -27,6 +27,7 @@
         this.span = document.querySelector('.steps');
         this.span.style.transform = `translate3d(${-100}%,0,0)`;
         this.$el.style.opacity = '1';
+        clearInterval(this.steps);
       },
       start () {
         this.init();
