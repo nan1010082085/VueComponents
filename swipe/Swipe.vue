@@ -24,6 +24,7 @@
     name : "swipeloop",
     data () {
       return {
+        surp:10, //多的值
         childrenWidth : 0,
 				click:false,
         sweep : -665,
@@ -50,7 +51,7 @@
         type:Number,
 				default: 3000
 			},
-      swiperIndex:Number
+      swiperIndex:Number,
 		},
     computed : {},
     watch : {
@@ -65,11 +66,11 @@
         if ( this.loops ) {
           this.INTER = setInterval(() => {
             that.swipeItemActive++;
-            that.sweep = -(that.childrenWidth * that.swipeItemActive) + 15
+            that.sweep = -(that.childrenWidth * that.swipeItemActive) + this.surp
             scroll.style =`transform:translateX(${that.sweep}px);width:${that.scrollWidth}`
             if ( st == that.swipeItemActive ) {
               that.swipeItemActive = 0
-              that.sweep = 15
+              that.sweep = this.surp
               scroll.style =`transform:translateX(${that.sweep}px);width:${that.scrollWidth}`
             }
           }, that.dec)
@@ -99,13 +100,13 @@
 
         let scroll = document.querySelector(`.${this.className}`)
         //手指离开 自动移动位置
-        this.swipeItemActive = -Math.round((this.sweep + this.move) / (this.childrenWidth - 15))
+        this.swipeItemActive = -Math.round((this.sweep + this.move) / (this.childrenWidth - this.surp))
 				if(this.swipeItemActive < 0 ){
           this.swipeItemActive = 0;
 				}else if(this.swipeItemActive > scroll.children.length -1) {
           this.swipeItemActive = scroll.children.length -1;
 				}
-        this.sweep = -(this.childrenWidth * this.swipeItemActive - 15)
+        this.sweep = -(this.childrenWidth * this.swipeItemActive - this.surp)
         scroll.style =`transform:translateX(${this.sweep}px);width:${this.scrollWidth}px`
 				//手子离开 500ms后 自动滚动
 				this.startInvter = setTimeout(()=>{
@@ -127,7 +128,7 @@
           if(that.$slots.default){
             clearInterval(inter)
             this.childrenWidth = this.$slots.default[ 0 ].elm.children[ 0 ].offsetWidth;
-            this.sweep = -(this.childrenWidth * this.swipeItemActive - 15)
+            this.sweep = -(this.childrenWidth * this.swipeItemActive - this.surp)
             let scroll = document.querySelector(`.${this.className}`)
             this.scrollWidth = scroll.children.length * this.childrenWidth;
             scroll.style =`transform:translateX(${this.sweep}px);width:${this.scrollWidth}px`
@@ -142,6 +143,7 @@
 			})
     },
     created () {
+      this.surp = 15 * ( window.innerWidth / 750)
       if(!this.className){
         throw new Error('className is not elm')
 			}

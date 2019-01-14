@@ -1,5 +1,7 @@
 # vue-components
 常用的vue组件
+> 20190114
+    * 增加 swipe 对屏幕宽度的计算
 > 20190111
     * 增加 swipe点击判断
     * 增加组件 swipe swipe-item 滚动组件

@@ -1,6 +1,7 @@
 <template>
 	<section class="swipe-item"
-					 :class="className">
+					 :class="className"
+	         :style="swipeItemStyle">
 		<slot />
 	</section>
 </template>
@@ -8,7 +9,6 @@
 	.swipe-item{
 		position: relative;
 		z-index: 2003;
-		transform:translateX(20px);
 	}
 </style>
 <script>
@@ -17,9 +17,19 @@
 		props:{
       className:String
 		},
+		computed:{
+      swipeItemStyle(){
+        return `transform:translateX(${this.surpItem}px);`
+			},
+		},
+		data(){
+      return {
+        surpItem:'',
+			}
+		},
 		methods:{},
-    mounted () {
-			this.$el.style.width = this.$slots.default[ 0 ].elm.offsetWidth;
+    created () {
+      this.surpItem = 20 *  ( window.innerWidth / 750)
     },
   }
 </script>
