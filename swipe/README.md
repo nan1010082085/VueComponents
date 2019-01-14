@@ -16,11 +16,12 @@
 			</SwipeLoopItem>
 		</SwipeLoop>
 ```
-> class-name 自定义 class 必填
-> loop 是否自动滚动
-> swiper-index 初始化显示第几个
-> change 滚动到那张 回调 index
-> click 点击事件
+>
+ * class-name 自定义 class 必填
+ * loop 是否自动滚动
+ * swiper-index 初始化显示第几个
+ * change 滚动到那张 回调 index
+ * click 点击事件
 ```
 import SwipeLoop      from './swipe/Swipe'
 import SwipeLoopItem  from './swipe/SwipeItem'
