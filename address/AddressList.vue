@@ -15,15 +15,16 @@
 				</div>
 			</div>
 			<div class="list-warp" ref="list-warp">
-				<div class="list-warp-item-active" ref="item-active"></div>
+				<div class="list-warp-item-active" style="position: absolute;z-index: -1;" ref="item-active"></div>
 				<div class="list-warp-item province"
 						 ref="province"
 						 parent="province"
-						 @touchstart.prevent.stop="handleItemStart($event ,'province')"
-						 @touchmove.prevent.stop="handleItemMove($event ,'province')"
-						 @touchend.prevent.stop="handleItemEnd($event ,'province','city','county','street')">
+						 @touchstart="handleItemStart($event ,'province')"
+						 @touchmove="handleItemMove($event ,'province')"
+						 @touchend="handleItemEnd($event ,'province','city','county','street')">
 					<div class="list-item__cell"
-							 v-for="(item,index) in provinces"
+							 @click.prevent.stop="handleClick($event ,'province','city','county','street')"
+							 v-for="(item,index) in get__Provinces"
 							 :index="index"
 							 :key="index"
 							 :class="{'list-warp-item__active':item.isCheck}">
@@ -33,11 +34,12 @@
 				<div class="list-warp-item city"
 						 ref="city"
 						 parent="city"
-						 @touchstart.prevent.stop="handleItemStartCity($event ,'city')"
-						 @touchmove.prevent.stop="handleItemMoveCity($event ,'city')"
-						 @touchend.prevent.stop="handleItemEndCity($event ,'city','county','street')">
+						 @touchstart="handleItemStartCity($event ,'city')"
+						 @touchmove="handleItemMoveCity($event ,'city')"
+						 @touchend="handleItemEndCity($event ,'city','county','street')">
 					<div class="list-item__cell"
-							 v-for="(item,index) in citys"
+							 @click.prevent.stop="handleClickCitys($event ,'city','county','street')"
+							 v-for="(item,index) in get__Citys"
 							 :index="index"
 							 :key="index"
 							 :class="{'list-warp-item__active':item.isCheck}">
@@ -47,11 +49,12 @@
 				<div class="list-warp-item county"
 						 ref="county"
 						 parent="county"
-						 @touchstart.prevent.stop="handleItemStartCounty($event ,'county')"
-						 @touchmove.prevent.stop="handleItemMoveCounty($event ,'county')"
-						 @touchend.prevent.stop="handleItemEndCounty($event ,'county','street')">
+						 @touchstart="handleItemStartCounty($event ,'county')"
+						 @touchmove="handleItemMoveCounty($event ,'county')"
+						 @touchend="handleItemEndCounty($event ,'county','street')">
 					<div class="list-item__cell"
-							 v-for="(item,index) in countys"
+							 @click.prevent.stop="handleClickCounty($event ,'county','street')"
+							 v-for="(item,index) in get__Countys"
 							 :index="index"
 							 :key="index"
 							 :class="{'list-warp-item__active':item.isCheck}">
@@ -61,11 +64,13 @@
 				<div class="list-warp-item street"
 						 ref="street"
 						 parent="street"
-						 @touchstart.prevent.stop="handleItemStartStreet($event ,'street')"
-						 @touchmove.prevent.stop="handleItemMoveStreet($event ,'street')"
-						 @touchend.prevent.stop="handleItemEndStreet($event ,'street')">
+						 @touchstart="handleItemStartStreet($event ,'street')"
+						 @touchmove="handleItemMoveStreet($event ,'street')"
+						 @touchend="handleItemEndStreet($event ,'street')">
 					<div class="list-item__cell"
-							 v-for="(item,index) in streets"
+							 @click.prevent.stop="handleClickStreet($event,'street')"
+
+							 v-for="(item,index) in get__Streets"
 							 :index="index"
 							 :key="index"
 							 :class="{'list-warp-item__active':item.isCheck}">
@@ -91,13 +96,13 @@
     name : "",
     data () {
       return {
-        visibilityShow : false,
+        visibilityShow : true,
         provinces : [],
         citys : [],
         countys : [],
         streets : [],
-
         activeData : [],
+
         initTop : 0, //初始化移动距离
         transformY : 0,
         startY : 0,
@@ -113,7 +118,9 @@
 
 				isEditStart: false, //控制默认选中第一次 以确保选中样式生效
 
-        saveValueData : null
+        saveValueData : null,
+				isChange:true,
+				change_ms: 300
       }
     },
     props : {
@@ -143,7 +150,20 @@
       },
       valueData : Object
     },
-    computed : {},
+    computed : {
+      get__Provinces(){
+        return this.provinces
+			},
+      get__Citys(){
+        return this.citys
+      },
+      get__Countys(){
+        return this.countys
+      },
+      get__Streets(){
+        return this.streets
+      },
+		},
     watch : {
       visible ( ISSHOW ) { //显示
         this.visibilityShow = ISSHOW;
@@ -176,11 +196,11 @@
 
                   provine.then((Bool)=>{
                     if(Bool){
-                      this.setValueData(this.saveValueData)
+                      this.setValueData(this.valueData)
                     }
                   })
 									//默认选中时 第一条数据不选中 不移动
-                  if(!this.saveValueData){
+                  if(!this.valueData){
                     this.init('province', true)
 									}
                 } else {
@@ -194,9 +214,9 @@
       },
       city : {
         handler ( isArray ) {
-          if ( isArray && isArray.length > 0 && Array.isArray(isArray) ) {
+          if ( isArray && Array.isArray(isArray) ) {
             this.$nextTick(() => {
-              if ( this.citys.length <= 0 || isArray[ 0 ].id != this.citys[ 0 ].id ) {
+              if ( this.citys|| isArray[ 0 ].id != this.citys[ 0 ].id ) {
                 this.citys = extendClone(this.city);
                 if(this.saveValueData && this.isEditStart) { //执行一次
                   this.citys.forEach(( item, index ) => { //判断id 第一位不选中 不移动
@@ -220,9 +240,9 @@
       },
       county : {
         handler ( isArray ) {
-          if ( isArray && isArray.length > 0 && Array.isArray(isArray) ) {
+          if ( isArray  && Array.isArray(isArray) ) {
             this.$nextTick(() => {
-              if ( this.countys.length <= 0 || isArray[ 0 ].id != this.countys[ 0 ].id ) {
+              if ( this.countys || isArray[ 0 ].id != this.countys[ 0 ].id ) {
                 this.countys = extendClone(this.county);
 
                 if(this.saveValueData && this.isEditStart){
@@ -247,9 +267,9 @@
       },
       street : {
         handler ( isArray ) {
-          if ( isArray && isArray.length > 0 && Array.isArray(isArray) ) {
+          if ( isArray && Array.isArray(isArray) ) {
             this.$nextTick(() => {
-              if ( this.streets.length <= 0 || isArray[ 0 ].id != this.streets[ 0 ].id ) {
+              if ( this.streets || isArray[ 0 ].id != this.streets[ 0 ].id ) {
                 this.streets = extendClone(this.street);
                 if(this.saveValueData && this.isEditStart){
 									this.streets.forEach(( item, index ) => {
@@ -340,7 +360,6 @@
         this.$emit('confirm', this.activeData);
       },
       init ( scrolllElm, setCheck ) {
-
         let that = this;
         setTimeout(() => {
           // console.log(that.$refs[ 'item-active' ].offsetTop);
@@ -366,82 +385,91 @@
       },
       setTranslate ( el, xs ) {
         try {
-          el.style = `transform:translateY(${xs}px);transition:transform .3s linear;`
+          el.style = `transform:translate3d(0,${xs}px,0);transition:transform 300ms linear;`
         } catch ( e ) {
           // throw 'EL IS NOT'
         }
       },
       //数据操作回调
       setValueData ( org ) {
-        // console.info('执行获取数据',org)
+        console.info('执行获取数据',org)
 				// console.log(this.provinces)
-        this.provinces.forEach(( item, index ) => {
-          if ( item.id == org.provinceId ) {
-            item.isCheck = true;
-            this.init('province', false)
-            return
-          }
-        })
+        // this.provinces.forEach(( item, index ) => {
+        //   if ( item.id == org.provinceId ) {
+        //     item.isCheck = true;
+        //     this.init('province', false)
+        //     return
+        //   }
+        // })
       },
+			//onchange
       setActiveData ( isArray, i ) {
         let index = Number(i);
         // console.log(isArray,i);
         let that = this;
         let obj;
-        switch ( isArray ) {
-          case 'province':
-            this.$set(that.activeData, 0, that.provinces[ index ])
-            obj = {
-              id : that.provinces[ index ] ? that.provinces[ index ].id : '',
-              rag : that.activeData,
-              tag : 'province'
-            }
-            this.$emit('change', obj)
-            ;
-            break
-          case 'city':
-            this.$set(that.activeData, 1, that.city[ index ])
-            if ( that.city[ index ] ) {
+        // 300ms 返回一次数据
+        if(this.isChange){
+          /*this.isChange = false
+          setTimeout(()=>{
+            this.isChange = true
+          },this.change_ms)*/
+
+          switch ( isArray ) {
+            case 'province':
+              this.$set(that.activeData, 0, that.provinces[ index ])
               obj = {
-                id : that.city[ index ] ? that.city[ index ].id : '',
+                id : that.provinces[ index ] ? that.provinces[ index ].id : '',
                 rag : that.activeData,
-                tag : 'city'
+                tag : 'province'
               }
               this.$emit('change', obj)
-            }
-            ;
-            break
-          case 'county':
-            this.$set(that.activeData, 2, that.county[ index ])
-            if ( that.county[ index ] ) {
-              obj = {
-                id : that.county[ index ] ? that.county[ index ].id : '',
-                rag : that.activeData,
-                tag : 'county'
+              ;
+              break
+            case 'city':
+              this.$set(that.activeData, 1, that.city[ index ])
+              if ( that.city[ index ] ) {
+                obj = {
+                  id : that.city[ index ] ? that.city[ index ].id : '',
+                  rag : that.activeData,
+                  tag : 'city'
+                }
+                this.$emit('change', obj)
               }
-              this.$emit('change', obj)
-            }
-            ;
-            break
-          case 'street':
-            this.$set(that.activeData, 3, that.street[ index ])
-            if ( that.street[ index ] ) {
-              obj = {
-                id : that.street[ index ] ? that.street[ index ].id : '',
-                rag : that.activeData,
-                tag : 'street'
+              ;
+              break
+            case 'county':
+              this.$set(that.activeData, 2, that.county[ index ])
+              if ( that.county[ index ] ) {
+                obj = {
+                  id : that.county[ index ] ? that.county[ index ].id : '',
+                  rag : that.activeData,
+                  tag : 'county'
+                }
+                this.$emit('change', obj)
               }
-              this.$emit('change', obj)
-            }
-            ;
-            break
+              ;
+              break
+            case 'street':
+              this.$set(that.activeData, 3, that.street[ index ])
+              if ( that.street[ index ] ) {
+                obj = {
+                  id : that.street[ index ] ? that.street[ index ].id : '',
+                  rag : that.activeData,
+                  tag : 'street'
+                }
+                this.$emit('change', obj)
+              }
+              ;
+              break
+          }
         }
       },
-
+			//touch
       handleItemStart ( e, r ) {
+        this.updown = false;
         this.currentItem = document.querySelector(`.${r}`).getAttribute('parent')
         this.startY = e.touches[ 0 ].clientY
-        this.updown = false;
       },
       handleItemMove ( e, r ) { // this.transformY 为 cell 元素高度
         let parent = document.querySelector(`.${r}`)
@@ -451,7 +479,8 @@
         this.moveY = e.touches[ 0 ].clientY
         this.isZF = this.moveY - this.startY > 0 ? true : false
         this.sweep = Math.round((this.moveY - this.startY) / this.transformY)
-        this.setTranslate(parent, this.currentSweep + (this.sweep * this.transformY))
+
+        this.setTranslate(parent, this.currentSweep + (this.sweep * this.transformY + this.sweep + 1))
       },
       handleItemEnd ( e, r, city, counts, stree ) {
         let parent = document.querySelector(`.${r}`) //滚动元素
@@ -459,46 +488,47 @@
         if ( this.updown ) {
           //判断是否是最后一个元素位
           let indexLen = this[ r ].length - 1;
-          //禁止超出元素滚动位置
-          //滑动元素位
-          this.currentSweep = this.currentSweep + (this.sweep * this.transformY) //正确的位置值
-          if ( this.currentSweep > this.initTop && this.isZF ) { //下滑
+
+          // 禁止超出元素滚动位置
+          // 滑动元素位
+          this.currentSweep = this.currentSweep + (this.sweep * this.transformY + this.sweep + 1) //正确的位置值
+
+          if ( this.currentSweep > this.initTop && this.isZF ) { //下滑到阈值
             this.currentSweep = this.initTop
             this.setTranslate(parent, this.initTop)
             return
           }
-          if ( indexLen <= Math.round(isZ / this.transformY) + Math.round(this.initTop / this.transformY) && !this.isZF ) { //上滑
+          if (
+            ((indexLen*this.transformY - this.initTop) - (Number(e.target.getAttribute('index'))) * this.transformY) < this.initTop && !this.isZF ||
+						indexLen <= Math.round(isZ / this.transformY) + Math.round(this.initTop / this.transformY) && !this.isZF ) { //上滑到阈值
             this.currentSweep = -(indexLen * this.transformY - this.initTop)
             this.setTranslate(parent, -(indexLen * this.transformY - this.initTop))
             return
           }
-        } else {
-          //清空
-          this[ `${r}s` ].map(data => {
-            this.$set(data, 'isCheck', false)
-          })
-          this[ `${city}s` ].map(data => {
-            this.$set(data, 'isCheck', false)
-          })
-          this[ `${counts}s` ].map(data => {
-            this.$set(data, 'isCheck', false)
-          })
-          this[ `${stree}s` ].map(data => {
-            this.$set(data, 'isCheck', false)
-          })
-          //选中
-          this.currentSweep = this.initTop - (Number(e.target.getAttribute('index')) * this.transformY)
-          this.setTranslate(parent, this.initTop - (Number(e.target.getAttribute('index')) * this.transformY))
-          this.$set(this[ `${r}s` ][ e.target.getAttribute('index') ], 'isCheck', true)
-          this.setActiveData(this.currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
         }
-      }
+      },
+      handleClick(e, r, city, counts, stree){
+        let parent = document.querySelector(`.${r}`) //滚动元素
+        this[ `${r}s` ].map(data => {
+          this.$set(data, 'isCheck', false)
+        })
+        this[ `${city}s` ].map(data => {
+          this.$set(data, 'isCheck', false)
+        })
+        this[ `${counts}s` ].map(data => {
+          this.$set(data, 'isCheck', false)
+        })
+        this[ `${stree}s` ].map(data => {
+          this.$set(data, 'isCheck', false)
+        })
+        //选中
+        this.currentSweep = this.initTop - (Number(e.target.getAttribute('index')) * this.transformY)
+        this.setTranslate(parent, this.initTop - (Number(e.target.getAttribute('index')) * this.transformY) - (Number(e.target.getAttribute('index') - 1 )));
+        this.$set(this[ `${r}s` ][ e.target.getAttribute('index') ], 'isCheck', true)
+        this.setActiveData(this.currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
+			},
     },
-    mounted () {
-      // this.$nextTick(()=>{
-      //   this.provinces = this.province;
-      //   this.init('province')})
-    },
+    mounted () {},
     created () {
     },
     filters : {},

@@ -60,7 +60,7 @@ export default {
       }
       this.streets_isZF = this.streets_moveY - this.streets_startY > 0 ? true : false
       this.streets_sweep = Math.round((this.streets_moveY - this.streets_startY) / this.streets_transformY)
-      this.setTranslate(parent, this.streets_currentSweep + (this.streets_sweep * this.streets_transformY))
+      this.setTranslate(parent, this.streets_currentSweep + (this.streets_sweep * this.streets_transformY + this.streets_sweep + 1))
     },
     handleItemEndStreet(e,r){
       let parent = document.querySelector(`.${r}`) //滚动元素
@@ -70,30 +70,31 @@ export default {
         //判断是否是最后一个元素位
         let indexLen = this[r].length - 1;
         //滑动元素位
-        this.streets_currentSweep = this.streets_currentSweep + (this.streets_sweep * this.streets_transformY) //正确的位置值
+        this.streets_currentSweep = this.streets_currentSweep + (this.streets_sweep * this.streets_transformY +  this.streets_sweep + 1) //正确的位置值
         if(this.streets_currentSweep > this.streets_initTop  && this.streets_isZF){ //下滑
           this.streets_currentSweep = this.streets_initTop
           this.setTranslate(parent, this.streets_initTop)
           return
         }
-        if( indexLen <= Math.round(isZ / this.streets_transformY) + Math.round(this.streets_initTop / this.streets_transformY) && !this.streets_isZF ){ //上滑
+        if( ((indexLen*this.streets_transformY - this.streets_initTop) - (Number(e.target.getAttribute('index')))* this.streets_transformY) < this.streets_initTop && !this.streets_isZF ||
+          indexLen <= Math.round(isZ / this.streets_transformY) + Math.round(this.streets_initTop / this.streets_transformY) && !this.streets_isZF ){ //上滑
           this.streets_currentSweep = -(indexLen * this.streets_transformY - this.streets_initTop)
           this.setTranslate(parent, -(indexLen * this.streets_transformY - this.streets_initTop))
           return
         }
-      } else {
-        //清空
-        this[`${r}s`].map(data=>{
-          this.$set(data,'isCheck', false)
-        })
-        //选中
-  
-        this.streets_currentSweep = this.streets_initTop - (Number(e.target.getAttribute('index'))*this.streets_transformY)
-        this.setTranslate(parent, this.streets_initTop - (Number(e.target.getAttribute('index'))*this.streets_transformY))
-        this.$set(this[`${r}s`][e.target.getAttribute('index')],'isCheck', true)
-        this.setActiveData(this.streets_currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
       }
-      
+    },
+    handleClickStreet(e,r){
+      let parent = document.querySelector(`.${r}`) //滚动元素
+      //清空
+      this[`${r}s`].map(data=>{
+        this.$set(data,'isCheck', false)
+      })
+      //选中
+      this.streets_currentSweep = this.streets_initTop - (Number(e.target.getAttribute('index'))*this.streets_transformY)
+      this.setTranslate(parent, this.streets_initTop - (Number(e.target.getAttribute('index'))*this.streets_transformY) - (Number(e.target.getAttribute('index') - 1 )))
+      this.$set(this[`${r}s`][e.target.getAttribute('index')],'isCheck', true)
+      this.setActiveData(this.streets_currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
     },
   }
 }

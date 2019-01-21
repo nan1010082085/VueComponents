@@ -60,7 +60,7 @@ export default {
         this.citys_updown = true
       }
       this.citys_sweep = Math.round((this.citys_moveY - this.citys_startY) / this.citys_transformY)
-      this.setTranslate(parent, this.citys_currentSweep + (this.citys_sweep * this.citys_transformY))
+      this.setTranslate(parent, this.citys_currentSweep + (this.citys_sweep * this.citys_transformY + this.citys_sweep + 1))
     },
     handleItemEndCity(e,r,counts,stree){
       let parent = document.querySelector(`.${r}`) //滚动元素
@@ -70,34 +70,37 @@ export default {
         //判断是否是最后一个元素位
         let indexLen = this[r].length - 1;
         //滑动元素位
-        this.citys_currentSweep = this.citys_currentSweep + (this.citys_sweep * this.citys_transformY) //正确的位置值
+        this.citys_currentSweep = this.citys_currentSweep + (this.citys_sweep * this.citys_transformY + this.citys_sweep + 1) //正确的位置值
         if(this.citys_currentSweep > this.citys_initTop  && this.citys_isZF){ //下滑
           this.citys_currentSweep = this.citys_initTop
           this.setTranslate(parent, this.citys_initTop)
           return
         }
-        if( indexLen <= Math.round(isZ / this.citys_transformY) + Math.round(this.citys_initTop / this.citys_transformY) && !this.citys_isZF ){ //上滑
+        if( ((indexLen*this.citys_transformY - this.citys_initTop) - (Number(e.target.getAttribute('index')))* this.citys_transformY) < this.citys_initTop && !this.citys_isZF ||
+          indexLen <= Math.round(isZ / this.citys_transformY) + Math.round(this.citys_initTop / this.citys_transformY) && !this.citys_isZF ){ //上滑
           this.citys_currentSweep = -(indexLen * this.citys_transformY - this.citys_initTop)
           this.setTranslate(parent, -(indexLen * this.citys_transformY - this.citys_initTop))
           return
         }
-      }else {
-        //清空
-        this[`${r}s`].map(data=>{
-          this.$set(data,'isCheck', false)
-        })
-        this[`${counts}s`].map(data=>{
-          this.$set(data,'isCheck', false)
-        })
-        this[`${stree}s`].map(data=>{
-          this.$set(data,'isCheck', false)
-        })
-        //选中
-        this.citys_currentSweep = this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY)
-        this.setTranslate(parent, this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY))
-        this.$set(this[`${r}s`][e.target.getAttribute('index')],'isCheck', true)
-        this.setActiveData(this.citys_currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
       }
+    },
+    handleClickCitys(e,r,counts,stree){
+      let parent = document.querySelector(`.${r}`) //滚动元素
+      //清空
+      this[`${r}s`].map(data=>{
+        this.$set(data,'isCheck', false)
+      })
+      this[`${counts}s`].map(data=>{
+        this.$set(data,'isCheck', false)
+      })
+      this[`${stree}s`].map(data=>{
+        this.$set(data,'isCheck', false)
+      })
+      //选中
+      this.citys_currentSweep = this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY)
+      this.setTranslate(parent, this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY) - (Number(e.target.getAttribute('index') - 1 )))
+      this.$set(this[`${r}s`][e.target.getAttribute('index')],'isCheck', true)
+      this.setActiveData(this.citys_currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
     },
   }
 }
