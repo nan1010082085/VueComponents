@@ -57,7 +57,7 @@ export default {
       }
       this.countys_isZF = this.countys_moveY - this.countys_startY > 0 ? true : false
       this.countys_sweep = Math.round((this.countys_moveY - this.countys_startY) / this.countys_transformY)
-      this.setTranslate(parent, this.countys_currentSweep + (this.countys_sweep * this.countys_transformY +  this.countys_sweep + 1))
+      this.setTranslate(parent, this.countys_currentSweep + (this.countys_sweep * this.countys_transformY))
     },
     handleItemEndCounty(e,r,stree){
       let parent = document.querySelector(`.${r}`) //滚动元素
@@ -67,7 +67,7 @@ export default {
         //判断是否是最后一个元素位
         let indexLen = this[ r ].length - 1;
         //滑动元素位
-        this.countys_currentSweep = this.countys_currentSweep + (this.countys_sweep * this.countys_transformY + this.countys_sweep + 1) //正确的位置值
+        this.countys_currentSweep = this.countys_currentSweep + (this.countys_sweep * this.countys_transformY) //正确的位置值
         if ( this.countys_currentSweep > this.countys_initTop && this.countys_isZF ) { //下滑
           this.countys_currentSweep = this.countys_initTop
           this.setTranslate(parent, this.countys_initTop)
@@ -92,7 +92,7 @@ export default {
       })
       //选中
       this.countys_currentSweep = this.countys_initTop - (Number(e.target.getAttribute('index'))*this.countys_transformY)
-      this.setTranslate(parent, this.countys_initTop - (Number(e.target.getAttribute('index'))*this.countys_transformY) - (Number(e.target.getAttribute('index') - 1 )))
+      this.setTranslate(parent, this.countys_initTop - (Number(e.target.getAttribute('index'))*this.countys_transformY))
       this.$set(this[`${r}s`][e.target.getAttribute('index')],'isCheck', true)
       this.setActiveData(this.countys_currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
     },

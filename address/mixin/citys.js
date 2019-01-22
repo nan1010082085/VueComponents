@@ -60,7 +60,7 @@ export default {
         this.citys_updown = true
       }
       this.citys_sweep = Math.round((this.citys_moveY - this.citys_startY) / this.citys_transformY)
-      this.setTranslate(parent, this.citys_currentSweep + (this.citys_sweep * this.citys_transformY + this.citys_sweep + 1))
+      this.setTranslate(parent, this.citys_currentSweep + (this.citys_sweep * this.citys_transformY))
     },
     handleItemEndCity(e,r,counts,stree){
       let parent = document.querySelector(`.${r}`) //滚动元素
@@ -70,7 +70,7 @@ export default {
         //判断是否是最后一个元素位
         let indexLen = this[r].length - 1;
         //滑动元素位
-        this.citys_currentSweep = this.citys_currentSweep + (this.citys_sweep * this.citys_transformY + this.citys_sweep + 1) //正确的位置值
+        this.citys_currentSweep = this.citys_currentSweep + (this.citys_sweep * this.citys_transformY) //正确的位置值
         if(this.citys_currentSweep > this.citys_initTop  && this.citys_isZF){ //下滑
           this.citys_currentSweep = this.citys_initTop
           this.setTranslate(parent, this.citys_initTop)
@@ -98,7 +98,7 @@ export default {
       })
       //选中
       this.citys_currentSweep = this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY)
-      this.setTranslate(parent, this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY) - (Number(e.target.getAttribute('index') - 1 )))
+      this.setTranslate(parent, this.citys_initTop - (Number(e.target.getAttribute('index'))*this.citys_transformY))
       this.$set(this[`${r}s`][e.target.getAttribute('index')],'isCheck', true)
       this.setActiveData(this.citys_currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
     },

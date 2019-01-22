@@ -6,7 +6,7 @@
 		<div
 			class="address-container"
 			:class="[visibilityShow ? 'address-show' : '']">
-			<div class="list-warp-header" ref="header">
+			<div class="list-warp-header" :style="`${isAndroid ? styleCss[2]: ''}`" ref="header">
 				<div class="list-header-item-ctn">
 					<div class="item-ctn" v-for="(item,index) in activeData" :key="index">{{item?item.value : ''}}</div>
 				</div>
@@ -14,20 +14,21 @@
 					确定
 				</div>
 			</div>
-			<div class="list-warp" ref="list-warp">
-				<div class="list-warp-item-active" style="position: absolute;z-index: -1;" ref="item-active"></div>
+			<div class="list-warp" ref="list-warp" :style="`${isAndroid ? styleCss[3]: ''}`">
+				<div class="list-warp-item-active" :style="`${isAndroid ? styleCss[0]: styleCss[1]}`" ref="item-active"></div>
 				<div class="list-warp-item province"
 						 ref="province"
 						 parent="province"
 						 @touchstart="handleItemStart($event ,'province')"
-						 @touchmove="handleItemMove($event ,'province')"
+						 @touchmove.prevent="handleItemMove($event ,'province')"
 						 @touchend="handleItemEnd($event ,'province','city','county','street')">
 					<div class="list-item__cell"
 							 @click.prevent.stop="handleClick($event ,'province','city','county','street')"
-							 v-for="(item,index) in get__Provinces"
+							 v-for="(item,index) in provinces"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}">
+							 :class="{'list-warp-item__active':item.isCheck}"
+							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
 				</div>
@@ -35,14 +36,15 @@
 						 ref="city"
 						 parent="city"
 						 @touchstart="handleItemStartCity($event ,'city')"
-						 @touchmove="handleItemMoveCity($event ,'city')"
+						 @touchmove.prevent="handleItemMoveCity($event ,'city')"
 						 @touchend="handleItemEndCity($event ,'city','county','street')">
 					<div class="list-item__cell"
 							 @click.prevent.stop="handleClickCitys($event ,'city','county','street')"
-							 v-for="(item,index) in get__Citys"
+							 v-for="(item,index) in citys"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}">
+							 :class="{'list-warp-item__active':item.isCheck}"
+							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
 				</div>
@@ -50,14 +52,15 @@
 						 ref="county"
 						 parent="county"
 						 @touchstart="handleItemStartCounty($event ,'county')"
-						 @touchmove="handleItemMoveCounty($event ,'county')"
+						 @touchmove.prevent="handleItemMoveCounty($event ,'county')"
 						 @touchend="handleItemEndCounty($event ,'county','street')">
 					<div class="list-item__cell"
 							 @click.prevent.stop="handleClickCounty($event ,'county','street')"
-							 v-for="(item,index) in get__Countys"
+							 v-for="(item,index) in countys"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}">
+							 :class="{'list-warp-item__active':item.isCheck}"
+							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
 				</div>
@@ -65,15 +68,15 @@
 						 ref="street"
 						 parent="street"
 						 @touchstart="handleItemStartStreet($event ,'street')"
-						 @touchmove="handleItemMoveStreet($event ,'street')"
+						 @touchmove.prevent="handleItemMoveStreet($event ,'street')"
 						 @touchend="handleItemEndStreet($event ,'street')">
 					<div class="list-item__cell"
 							 @click.prevent.stop="handleClickStreet($event,'street')"
-
-							 v-for="(item,index) in get__Streets"
+							 v-for="(item,index) in streets"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}">
+							 :class="{'list-warp-item__active':item.isCheck}"
+							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
 				</div>
@@ -93,10 +96,10 @@
   export default {
     components : {},
     mixins : [ citys, countys, streets ],
-    name : "",
+    name : "Address-List",
     data () {
       return {
-        visibilityShow : true,
+        visibilityShow : false,
         provinces : [],
         citys : [],
         countys : [],
@@ -119,8 +122,15 @@
 				isEditStart: false, //控制默认选中第一次 以确保选中样式生效
 
         saveValueData : null,
-				isChange:true,
-				change_ms: 300
+				//判断android 修改固定样式
+				isAndroid:false,
+				styleCss:[
+					`height:44px;position:absolute;z-index:-1;`,
+          `position:absolute;z-index:-1;`,
+					`height: 50px;line-height: 50px`,
+					`height: calc(50vh - 50px);`,
+					`height: 44px;line-height: 44px;`
+				]
       }
     },
     props : {
@@ -150,20 +160,7 @@
       },
       valueData : Object
     },
-    computed : {
-      get__Provinces(){
-        return this.provinces
-			},
-      get__Citys(){
-        return this.citys
-      },
-      get__Countys(){
-        return this.countys
-      },
-      get__Streets(){
-        return this.streets
-      },
-		},
+    computed : {},
     watch : {
       visible ( ISSHOW ) { //显示
         this.visibilityShow = ISSHOW;
@@ -366,7 +363,10 @@
           //that.$refs[ 'item-active' ].offsetTop - that.$refs['header'].offsetHeight
           that.initTop = that.$refs[ 'item-active' ].offsetTop - that.$refs[ 'header' ].offsetHeight;
           that.transformY = that.$refs[ 'item-active' ].offsetHeight
-					//每次选框显示时 控制元素位置
+
+          console.log(that.initTop);
+          console.log(that.transformY);
+          //每次选框显示时 控制元素位置
           if ( setCheck ) {
             that.currentSweep = that.initTop;
             that.setTranslate(that.$refs[ scrolllElm ], that.initTop)
@@ -394,13 +394,15 @@
       setValueData ( org ) {
         console.info('执行获取数据',org)
 				// console.log(this.provinces)
-        // this.provinces.forEach(( item, index ) => {
-        //   if ( item.id == org.provinceId ) {
-        //     item.isCheck = true;
-        //     this.init('province', false)
-        //     return
-        //   }
-        // })
+        try{
+          this.provinces.forEach(( item, index ) => {
+            if ( item.id == org.provinceId ) {
+              item.isCheck = true;
+              this.init('province', false)
+              return
+            }
+          })
+				}catch ( e ) {}
       },
 			//onchange
       setActiveData ( isArray, i ) {
@@ -408,62 +410,56 @@
         // console.log(isArray,i);
         let that = this;
         let obj;
-        // 300ms 返回一次数据
-        if(this.isChange){
-          /*this.isChange = false
-          setTimeout(()=>{
-            this.isChange = true
-          },this.change_ms)*/
 
-          switch ( isArray ) {
-            case 'province':
-              this.$set(that.activeData, 0, that.provinces[ index ])
+        switch ( isArray ) {
+          case 'province':
+            this.$set(that.activeData, 0, that.provinces[ index ])
+            obj = {
+              id : that.provinces[ index ] ? that.provinces[ index ].id : '',
+              rag : that.activeData,
+              tag : 'province'
+            }
+            this.$emit('change', obj)
+            ;
+            break
+          case 'city':
+            this.$set(that.activeData, 1, that.city[ index ])
+            if ( that.city[ index ] ) {
               obj = {
-                id : that.provinces[ index ] ? that.provinces[ index ].id : '',
+                id : that.city[ index ] ? that.city[ index ].id : '',
                 rag : that.activeData,
-                tag : 'province'
+                tag : 'city'
               }
               this.$emit('change', obj)
-              ;
-              break
-            case 'city':
-              this.$set(that.activeData, 1, that.city[ index ])
-              if ( that.city[ index ] ) {
-                obj = {
-                  id : that.city[ index ] ? that.city[ index ].id : '',
-                  rag : that.activeData,
-                  tag : 'city'
-                }
-                this.$emit('change', obj)
+            }
+            ;
+            break
+          case 'county':
+            this.$set(that.activeData, 2, that.county[ index ])
+            if ( that.county[ index ] ) {
+              obj = {
+                id : that.county[ index ] ? that.county[ index ].id : '',
+                rag : that.activeData,
+                tag : 'county'
               }
-              ;
-              break
-            case 'county':
-              this.$set(that.activeData, 2, that.county[ index ])
-              if ( that.county[ index ] ) {
-                obj = {
-                  id : that.county[ index ] ? that.county[ index ].id : '',
-                  rag : that.activeData,
-                  tag : 'county'
-                }
-                this.$emit('change', obj)
+              this.$emit('change', obj)
+            }
+            ;
+            break
+          case 'street':
+            this.$set(that.activeData, 3, that.street[ index ])
+            if ( that.street[ index ] ) {
+              obj = {
+                id : that.street[ index ] ? that.street[ index ].id : '',
+                rag : that.activeData,
+                tag : 'street'
               }
-              ;
-              break
-            case 'street':
-              this.$set(that.activeData, 3, that.street[ index ])
-              if ( that.street[ index ] ) {
-                obj = {
-                  id : that.street[ index ] ? that.street[ index ].id : '',
-                  rag : that.activeData,
-                  tag : 'street'
-                }
-                this.$emit('change', obj)
-              }
-              ;
-              break
-          }
+              this.$emit('change', obj)
+            }
+            ;
+            break
         }
+        // 300ms 返回一次数据
       },
 			//touch
       handleItemStart ( e, r ) {
@@ -480,7 +476,7 @@
         this.isZF = this.moveY - this.startY > 0 ? true : false
         this.sweep = Math.round((this.moveY - this.startY) / this.transformY)
 
-        this.setTranslate(parent, this.currentSweep + (this.sweep * this.transformY + this.sweep + 1))
+        this.setTranslate(parent, this.currentSweep + (this.sweep * this.transformY))
       },
       handleItemEnd ( e, r, city, counts, stree ) {
         let parent = document.querySelector(`.${r}`) //滚动元素
@@ -491,7 +487,7 @@
 
           // 禁止超出元素滚动位置
           // 滑动元素位
-          this.currentSweep = this.currentSweep + (this.sweep * this.transformY + this.sweep + 1) //正确的位置值
+          this.currentSweep = this.currentSweep + (this.sweep * this.transformY ) //正确的位置值
 
           if ( this.currentSweep > this.initTop && this.isZF ) { //下滑到阈值
             this.currentSweep = this.initTop
@@ -508,6 +504,7 @@
         }
       },
       handleClick(e, r, city, counts, stree){
+        console.log('click', e.target)
         let parent = document.querySelector(`.${r}`) //滚动元素
         this[ `${r}s` ].map(data => {
           this.$set(data, 'isCheck', false)
@@ -523,14 +520,28 @@
         })
         //选中
         this.currentSweep = this.initTop - (Number(e.target.getAttribute('index')) * this.transformY)
-        this.setTranslate(parent, this.initTop - (Number(e.target.getAttribute('index')) * this.transformY) - (Number(e.target.getAttribute('index') - 1 )));
+        this.setTranslate(parent, this.initTop - (Number(e.target.getAttribute('index')) * this.transformY));
         this.$set(this[ `${r}s` ][ e.target.getAttribute('index') ], 'isCheck', true)
         this.setActiveData(this.currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
 			},
     },
     mounted () {},
     created () {
-    },
+      let that = this;
+      this.$nextTick(()=>{
+        try {
+          if ( window.__wxjs_is_wkwebview === true ) {
+            //function ...  WKWebview ios
+            that.isAndroid = false;
+          } else if ( window.__wxjs_is_wkwebview === false || window.__wxjs_is_wkwebview === undefined ) {
+            //function ...  UIWebview
+            that.isAndroid = true;
+          }
+        } catch ( e ) {
+        }
+        // console.log(this.isAndroid)
+      })
+		},
     filters : {},
     directives : {},
     beforeDestroy () {
