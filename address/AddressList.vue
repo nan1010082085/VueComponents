@@ -184,9 +184,9 @@
                   // console.info(this.provinces.length > 0, 'province')
                   //当省有数据时 执行选中获取
                   let provine = new Promise((resolve)=>{
-                    console.log('valueData');
+                    // console.log('valueData');
                     while (this.provinces.length > 0 ) {
-                      console.info('promise >0')
+                      // console.info('promise >0')
                       return resolve(true)
                     }
                   })
@@ -364,8 +364,8 @@
           that.initTop = that.$refs[ 'item-active' ].offsetTop - that.$refs[ 'header' ].offsetHeight;
           that.transformY = that.$refs[ 'item-active' ].offsetHeight
 
-          console.log(that.initTop);
-          console.log(that.transformY);
+          // console.log(that.initTop);
+          // console.log(that.transformY);
           //每次选框显示时 控制元素位置
           if ( setCheck ) {
             that.currentSweep = that.initTop;
@@ -504,7 +504,7 @@
         }
       },
       handleClick(e, r, city, counts, stree){
-        console.log('click', e.target)
+        // console.log('click', e.target)
         let parent = document.querySelector(`.${r}`) //滚动元素
         this[ `${r}s` ].map(data => {
           this.$set(data, 'isCheck', false)
