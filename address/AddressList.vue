@@ -119,18 +119,18 @@
         updown : false,
         isProvincesClick : false,
 
-				isEditStart: false, //控制默认选中第一次 以确保选中样式生效
+        isEditStart : false, //控制默认选中第一次 以确保选中样式生效
 
         saveValueData : null,
-				//判断android 修改固定样式
-				isAndroid:false,
-				styleCss:[
-					`height:44px;position:absolute;z-index:-1;`,
+        //判断android 修改固定样式
+        isAndroid : false,
+        styleCss : [
+          `height:44px;position:absolute;z-index:-1;`,
           `position:absolute;z-index:-1;`,
-					`height: 50px;line-height: 50px`,
-					`height: calc(50vh - 50px);`,
-					`height: 44px;line-height: 44px;`
-				]
+          `height: 50px;line-height: 50px`,
+          `height: calc(50vh - 50px);`,
+          `height: 44px;line-height: 44px;`
+        ]
       }
     },
     props : {
@@ -165,7 +165,7 @@
       visible ( ISSHOW ) { //显示
         this.visibilityShow = ISSHOW;
         //显示时 控制是否是选中第一次
-				this.isEditStart = false
+        this.isEditStart = false
       },
       visibilityShow ( Bool ) {
         if ( Bool ) {
@@ -174,36 +174,48 @@
           })
         }
       },
-      province : {
-        handler ( isArray ) {
-            if ( isArray && isArray.length > 0 && Array.isArray(isArray) ) {
-              this.$nextTick(() => {
-                if ( this.provinces.length <= 0 ) {
-                  this.provinces = extendClone(this.province)
+      valueData : {
+        handler ( org ) {
+          if ( org ) {
+            // console.log(org)
+            this.$nextTick(() => {
+              this.saveValueData = extendClone(org)
+              this.isEditStart = true
+              let provine = new Promise(( resolve ) => {
+							 let Inter = 	setInterval(()=>{
+                  if (this.provinces.length > 0 && Object.getOwnPropertyNames(this.saveValueData).length > 1) {
+                    clearInterval(Inter)
+                    return resolve(true)
+                  }
+								},5)
+              })
 
-                  // console.info(this.provinces.length > 0, 'province')
-                  //当省有数据时 执行选中获取
-                  let provine = new Promise((resolve)=>{
-                    // console.log('valueData');
-                    while (this.provinces.length > 0 ) {
-                      // console.info('promise >0')
-                      return resolve(true)
-                    }
-                  })
-
-                  provine.then((Bool)=>{
-                    if(Bool){
-                      this.setValueData(this.valueData)
-                    }
-                  })
-									//默认选中时 第一条数据不选中 不移动
-                  if(!this.valueData){
-                    this.init('province', true)
-									}
-                } else {
-                  this.init('province', false)
+              provine.then(( Bool ) => {
+                if ( Bool) {
+                  //等待默认数据赋值后执行
+                  this.setValueData(this.saveValueData)
                 }
               })
+            })
+          }
+        },
+        deep : true,
+        immediate : true
+      },
+      province : {
+        handler ( isArray ) {
+          if ( isArray && isArray.length > 0 && Array.isArray(isArray) ) {
+            this.$nextTick(() => {
+              if ( this.provinces.length <= 0 ) {
+                this.provinces = extendClone(this.province)
+                //默认选中时 第一条数据不选中 不移动
+                if ( !this.saveValueData ) {
+                  this.init('province', true)
+                }
+              } else {
+                this.init('province', false)
+              }
+            })
           }
         },
         deep : true,
@@ -213,9 +225,9 @@
         handler ( isArray ) {
           if ( isArray && Array.isArray(isArray) ) {
             this.$nextTick(() => {
-              if ( this.citys|| isArray[ 0 ].id != this.citys[ 0 ].id ) {
+              if ( this.citys || isArray[ 0 ].id != this.citys[ 0 ].id ) {
                 this.citys = extendClone(this.city);
-                if(this.saveValueData && this.isEditStart) { //执行一次
+                if ( this.saveValueData && this.isEditStart ) { //执行一次
                   this.citys.forEach(( item, index ) => { //判断id 第一位不选中 不移动
                     if ( item.id == this.valueData.cityId ) {
                       item.isCheck = true;
@@ -223,7 +235,7 @@
                       return
                     }
                   })
-                }else {
+                } else {
                   this.initCity('city', true)
                 }
               } else {
@@ -237,12 +249,12 @@
       },
       county : {
         handler ( isArray ) {
-          if ( isArray  && Array.isArray(isArray) ) {
+          if ( isArray && Array.isArray(isArray) ) {
             this.$nextTick(() => {
               if ( this.countys || isArray[ 0 ].id != this.countys[ 0 ].id ) {
                 this.countys = extendClone(this.county);
 
-                if(this.saveValueData && this.isEditStart){
+                if ( this.saveValueData && this.isEditStart ) {
                   this.countys.forEach(( item, index ) => {
                     if ( item.id == this.valueData.districtId ) {
                       item.isCheck = true;
@@ -250,7 +262,7 @@
                       return
                     }
                   })
-								}else {
+                } else {
                   this.initCounty('county', true)
                 }
               } else {
@@ -268,15 +280,15 @@
             this.$nextTick(() => {
               if ( this.streets || isArray[ 0 ].id != this.streets[ 0 ].id ) {
                 this.streets = extendClone(this.street);
-                if(this.saveValueData && this.isEditStart){
-									this.streets.forEach(( item, index ) => {
-										if ( item.id == this.valueData.townId ) {
-											item.isCheck = true;
-											this.initStreet('street', false)
-											return
-										}
-									})
-                }else {
+                if ( this.saveValueData && this.isEditStart ) {
+                  this.streets.forEach(( item, index ) => {
+                    if ( item.id == this.valueData.townId ) {
+                      item.isCheck = true;
+                      this.initStreet('street', false)
+                      return
+                    }
+                  })
+                } else {
                   this.initStreet('street', true)
                 }
               } else {
@@ -288,20 +300,60 @@
         deep : true,
         immediate : true
       },
-      valueData : {
-        handler ( org ) {
-          if ( org ) {
-            this.$nextTick(() => {
-              this.saveValueData = extendClone(org)
-							this.isEditStart = true
-            })
-          }
-        },
-        deep : true,
-				immediate:true
-      }
     },
     methods : {
+      reset () {
+        this.initTop = 0; //初始化移动距离
+        this.transformY = 0;
+        this.startY = 0;
+        this.moveY = 0;
+        this.isZF = false; //判断 上下滑动方向
+        this.currentItem = ''; //当前滚动是那个 item
+        this.currentSweep = 0;  //移动起始距离
+        this.sweep = 0;  //计算一次移动是几个元素位
+        this.currentIndex = 0;
+
+        this.updown = false;
+        this.isProvincesClick = false;
+        this.isEditStart = false; //控制默认选中第一次 以确保选中样式生效
+        this.saveValueData = null;
+        //citys
+        this.citys_initTop = 0; //初始化移动距离
+        this.citys_transformY = 0;
+        this.citys_startY = 0;
+        this.citys_moveY = 0;
+        this.citys_isZF = false; //判断 上下滑动方向
+        this.citys_currentItem = ''; //当前滚动是那个 item
+        this.citys_currentSweep = 0;  //移动起始距离
+        this.citys_sweep = 0;  //计算一次移动是几个元素位
+        this.citys_currentTop = 0;
+        this.citys_currentIndex = 0;
+        this.citys_updown = false;
+        //countys
+        this.countys_initTop = 0; //初始化移动距离
+        this.countys_transformY = 0;
+        this.countys_startY = 0;
+        this.countys_moveY = 0;
+        this.countys_isZF = false; //判断 上下滑动方向
+        this.countys_currentItem = ''; //当前滚动是那个 item
+        this.countys_currentSweep = 0;  //移动起始距离
+        this.countys_sweep = 0;  //计算一次移动是几个元素位
+        this.countys_currentTop = 0;
+        this.countys_currentIndex = 0;
+        this.countys_updown = false;
+        //streets
+        this.streets_initTop = 0; //初始化移动距离
+        this.streets_transformY = 0;
+        this.streets_startY = 0;
+        this.streets_moveY = 0;
+        this.streets_isZF = false; //判断 上下滑动方向
+        this.streets_currentItem = ''; //当前滚动是那个 item
+        this.streets_currentSweep = 0;  //移动起始距离
+        this.streets_sweep = 0;  //计算一次移动是几个元素位
+        this.streets_currentTop = 0;
+        this.streets_currentIndex = 0;
+        this.streets_updown = false;
+      },
       open () {
         this.visibilityShow = true;
         this.$emit('open');
@@ -392,9 +444,9 @@
       },
       //数据操作回调
       setValueData ( org ) {
-        console.info('执行获取数据',org)
-				// console.log(this.provinces)
-        try{
+        // console.info('执行获取数据', org)
+        // console.log(this.provinces)
+        try {
           this.provinces.forEach(( item, index ) => {
             if ( item.id == org.provinceId ) {
               item.isCheck = true;
@@ -402,9 +454,11 @@
               return
             }
           })
-				}catch ( e ) {}
+        } catch ( e ) {
+          console.error(e)
+        }
       },
-			//onchange
+      //onchange
       setActiveData ( isArray, i ) {
         let index = Number(i);
         // console.log(isArray,i);
@@ -461,7 +515,7 @@
         }
         // 300ms 返回一次数据
       },
-			//touch
+      //touch
       handleItemStart ( e, r ) {
         this.updown = false;
         this.currentItem = document.querySelector(`.${r}`).getAttribute('parent')
@@ -487,7 +541,7 @@
 
           // 禁止超出元素滚动位置
           // 滑动元素位
-          this.currentSweep = this.currentSweep + (this.sweep * this.transformY ) //正确的位置值
+          this.currentSweep = this.currentSweep + (this.sweep * this.transformY) //正确的位置值
 
           if ( this.currentSweep > this.initTop && this.isZF ) { //下滑到阈值
             this.currentSweep = this.initTop
@@ -495,15 +549,15 @@
             return
           }
           if (
-            ((indexLen*this.transformY - this.initTop) - (Number(e.target.getAttribute('index'))) * this.transformY) < this.initTop && !this.isZF ||
-						indexLen <= Math.round(isZ / this.transformY) + Math.round(this.initTop / this.transformY) && !this.isZF ) { //上滑到阈值
+            ((indexLen * this.transformY - this.initTop) - (Number(e.target.getAttribute('index'))) * this.transformY) < this.initTop && !this.isZF ||
+            indexLen <= Math.round(isZ / this.transformY) + Math.round(this.initTop / this.transformY) && !this.isZF ) { //上滑到阈值
             this.currentSweep = -(indexLen * this.transformY - this.initTop)
             this.setTranslate(parent, -(indexLen * this.transformY - this.initTop))
             return
           }
         }
       },
-      handleClick(e, r, city, counts, stree){
+      handleClick ( e, r, city, counts, stree ) {
         // console.log('click', e.target)
         let parent = document.querySelector(`.${r}`) //滚动元素
         this[ `${r}s` ].map(data => {
@@ -523,12 +577,13 @@
         this.setTranslate(parent, this.initTop - (Number(e.target.getAttribute('index')) * this.transformY));
         this.$set(this[ `${r}s` ][ e.target.getAttribute('index') ], 'isCheck', true)
         this.setActiveData(this.currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
-			},
+      }
     },
-    mounted () {},
+    mounted () {
+    },
     created () {
       let that = this;
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         try {
           if ( window.__wxjs_is_wkwebview === true ) {
             //function ...  WKWebview ios
@@ -541,10 +596,12 @@
         }
         // console.log(this.isAndroid)
       })
-		},
+    },
     filters : {},
     directives : {},
     beforeDestroy () {
+      // console.info('addresslist 实例销毁前')
+      this.reset();
     },
     destroyed () {
     }
