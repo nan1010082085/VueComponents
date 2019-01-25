@@ -1,0 +1,120 @@
+@charset "UTF-8";
+//主题色
+@e-color : rgb(29,128,214);
+//底层背景
+@e-background-color : #f9f9f9;
+
+body {
+	font-size: .14rem;
+}
+
+#app {
+	width: 100vw;
+	min-height: 100vh;
+	background: @e-background-color;
+}
+
+.scroll-container {
+	-webkit-overflow-scrolling: touch;
+	overflow-scrolling: touch;
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 100%;
+	height: calc(100vh - 50px);
+}
+
+.fw600 {
+	font-weight: bold;
+}
+
+//display
+.dis {
+	display: block;
+}
+
+.dinb {
+	display: inline-block;
+}
+
+
+//text-algin
+.tal {
+	text-align: left;
+}
+
+.tac {
+	text-align: center;
+}
+
+.tar {
+	text-align: right;
+}
+
+.float-l {
+	float: left;
+	vertical-align: middle;
+}
+
+.float-r {
+	float: right;
+	vertical-align: middle;
+}
+
+.float-l::after, .float-r::after, .float-l::before, .float-r::before {
+	display: block;
+	content: '';
+	clear: both;
+}
+
+.vam {
+	vertical-align: middle;
+}
+
+.text-overflow {
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+}
+.text-overflow3{
+	display: -webkit-box;
+	overflow: hidden;
+	word-break: break-all;
+	-webkit-line-clamp:3;
+	-webkit-box-orient:vertical;
+}
+
+a:hover,
+a:active,
+a:focus {
+	outline: none;
+	text-decoration: none;
+	background: transparent;
+}
+
+//左出右进
+.slide-fade-enter-active {
+	transition: all .3s;
+}
+
+.slide-fade-leave-active {
+	transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter {
+	transform: translate3d(0, 50%, 0);
+	opacity: 0;
+}
+
+.slide-fade-leave-to {
+	transform: translate3d(0, -50%, 0);
+	opacity: 0;
+}
+
+.fixed-bottom{
+	width: 100vw;
+	z-index: 1;
+	left: 0;
+	bottom: 0;
+	position: fixed;
+}
