@@ -1,0 +1,117 @@
+@charset "UTF-8";
+
+.y-calendar {
+	width: 100vw;
+	height: 350px;
+	background: #fff;
+}
+
+//横线
+.striping {
+	box-sizing: border-box;
+	border-bottom: 1px solid #a9a9a9;
+}
+
+.y-disable{
+	color: #a9a9a9;
+}
+
+//顶部
+.y-calendar-head {
+	padding: 15px;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-align-items: center;
+	align-items: center;
+	background: #fff;
+	.y-calendar-item {
+		flex-basis: 33.33%;
+		text-align: center;
+		font-size: 16px;
+	}
+
+	.left {
+		font-size: 12px;
+		text-align: left;
+	}
+
+	.right {
+		font-size: 12px;
+		text-align: right;
+	}
+}
+
+//内容
+.y-calendar-content {
+	padding: 0 10px;
+
+	.y-calendar-content-head{
+		display: -webkit-flex;
+		display: flex;
+		-webkit-align-items: center;
+		align-items: center;
+		width: 100%;
+		height: 40px;
+		padding: 5px 0;
+
+		.y-head-item{
+			flex-basis: 14.28%;
+			text-align: center;
+			font-weight: bold;
+		}
+	}
+
+	.y-calendar-content-list{
+		width: 100%;
+		height: 100%;
+		.y-list-item{
+			width: 14.28%;
+			height: 40px;
+			display: inline-block;
+			text-align: center;
+			float: left;
+			transition: margin .3s ease-in-out;
+		}
+		.y-list-item:before,.y-list-item:after{
+			display: block;
+			clear: both;
+			content: '';
+		}
+	}
+}
+
+
+.y-day{
+	position: relative;
+	display: block;
+	margin: auto;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	i{
+		position: absolute;
+		bottom: -5px;
+		left: 40%;
+		display: block;
+		width: 6px;
+		height: 6px;
+		background: #37b48d;
+		border-radius: 50%;
+		box-sizing: border-box;
+	}
+}
+.y-day--active{
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 1px solid #37b48d;
+	transition: all .3s ease-in-out;
+}
+
+.y-day--select{
+	color: #ffffff;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 1px solid #37b48d!important;
+	background: #37b48d;
+	transition: all .3s ease-in-out;
+}
