@@ -118,11 +118,15 @@
           this.currentDay.push(i + 1)
         }
         //当前是几号
-        this.cDay = new Date(year, month - 1).getDate();
+        if(new Date().getMonth() + 1 == month){
+          this.cDay = new Date(year, month - 1).getDate();
+				}else {
+          this.cDay = 0
+				}
         //计算上月最后一天是星期几
         this.$nextTick(() => {
           let day = new Date(year, month - 1).getDay();
-          console.log(day);
+          // console.log(day);
           let itemEl = document.getElementsByClassName('y-list-item')[ 0 ]
           itemEl.style = `margin-left:${day * 14.28 + '%'};`
         })
