@@ -59,6 +59,7 @@
     name : "Calendar",
     data () {
       return {
+        year : 1,
         currentMonth : 1, //当前月
 
 
@@ -97,6 +98,8 @@
         handler(day){
           if(day.length > 0 && Array.isArray(day)){
             this.cDayStyle = day
+					}else {
+            this.cDayStyle = []
 					}
 				},
 				deep:true,
@@ -110,26 +113,28 @@
       },
       //当前月天数， 当前月第一天是星期几
       monthDay ( month ) {
-        let year = new Date().getFullYear();
+        this.year = new Date().getFullYear();
         let months = month.toString().length == 1 ? '0' + (month + 1) : month + 1
-        let dayList = new Date(year, months, 0).getDate();
+        let dayList = new Date(this.year, months, 0).getDate();
         this.currentDay = [];
         for ( let i = 0 ; i < dayList ; i++ ) {
           this.currentDay.push(i + 1)
         }
         //当前是几号
         if(new Date().getMonth() + 1 == month){
-          this.cDay = new Date(year, month - 1).getDate();
+          this.cDay = new Date().getDate();
 				}else {
           this.cDay = 0
 				}
         //计算上月最后一天是星期几
         this.$nextTick(() => {
-          let day = new Date(year, month - 1).getDay();
+          let day = new Date(this.year, month - 1).getDay();
           // console.log(day);
           let itemEl = document.getElementsByClassName('y-list-item')[ 0 ]
           itemEl.style = `margin-left:${day * 14.28 + '%'};`
         })
+        let eMsg = {year : this.year, month : this.currentMonth}
+        this.$emit('change', eMsg)
       },
       //点击前一月
       handleLeftClick () {
@@ -139,6 +144,8 @@
 
         this.currentMonth--;
         this.initData(this.currentMonth);
+        let eMsg = {year : this.year, month : this.currentMonth}
+        this.$emit('change', eMsg)
       },
       //点击后一月
       handleRightClick () {
@@ -148,6 +155,8 @@
 
         this.currentMonth++;
         this.initData(this.currentMonth);
+        let eMsg = {year : this.year, month : this.currentMonth}
+        this.$emit('change', eMsg)
       },
 
       //样式
