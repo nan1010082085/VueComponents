@@ -63,13 +63,17 @@
       getDoc ( url ) {
         let that = this;
         PDFJS.cMapPacked = true;
-        PDFJS.getDocument(url).then(pdf => {
+        PDFJS.getDocument({
+					url:url,
+          cMapUrl : '../pdf/cmaps/',
+          cMapPacked : true
+        }).then(pdf => {
 						that.pdfData = pdf;
 					that.numPages = pdf._pdfInfo.numPages
 					that.renderCvs();
 				})
       },
-      renderCvs ( num ) {
+      renderCvs (  ) {
         let vm = this;
         for ( let i = 1 ; i <= this.numPages ; i++ ) {
           this.pdfData.getPage(i).then(function ( page ) {
@@ -88,9 +92,6 @@
             }
             page.render(renderContext)
           })
-          if(i == this.numPages){
-            document.querySelector('.pdf-canvas-box').scrollTo(0,10)
-          }
         }
       },
       //縮放操作
