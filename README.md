@@ -1,5 +1,9 @@
 # vue-components
-常用的vue组件
+vue组件
+> 20190320
+
+    * 增加 loader 加载进度条组件
+    
 > 20190306
 
     * 增加 paf转换组件，微信中解析pdf文件
