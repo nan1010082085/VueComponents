@@ -27,7 +27,8 @@
 
 			<div class="y-calendar-content-list">
 				<div class="y-list-item"
-						 v-for="(item,index) in currentDay" :key="index">
+						 v-for="(item,index) in currentDay" :key="index"
+						 @click="handleChangeItem(item)">
 					<p class="y-day"
 						 v-if="!circle"
 						 :class="[cDay == item ? 'y-day--active' :'']"
@@ -43,6 +44,9 @@
 						<i v-if="showCircle(item)" :style="`background:${backgroundColor};`"></i>
 					</p>
 				</div>
+			</div>
+			<div class="y-remark">
+				<p>{{setRemark}}</p>
 			</div>
 		</section>
 	</section>
@@ -67,7 +71,8 @@
         weekDate : [ '日', '一', '二', '三', '四', '五', '六' ],
         cDay : 1,
         cDayStyle : [],  //选中样式
-        currentDay : [] //当前月天数
+        currentDay : [], //当前月天数
+        currentRemark : 0
       }
     },
     props : {
@@ -87,25 +92,36 @@
         type : String,
         default : '#37b48d'
       },
-      dayActive:{
+      dayActive : {
         type : Array,
-        default : ()=>[]
-			}
+        default : () => []
+      }
     },
-    computed : {},
+    computed : {
+      setRemark () {
+        if ( this.cDayStyle.length > 0 ) {
+          for ( let i = 0 ; i < this.cDayStyle.length ; i++ ) {
+            const cDayStyleElement = this.cDayStyle[ i ];
+            if ( cDayStyleElement.active == this.currentRemark ) {
+              return cDayStyleElement.remark ? cDayStyleElement.remark : ''
+            }
+          }
+        }
+      }
+    },
     watch : {
-      dayActive:{
-        handler(day){
-          if(day.length > 0 && Array.isArray(day)){
+      dayActive : {
+        handler ( day ) {
+          if ( day.length > 0 && Array.isArray(day) ) {
             this.cDayStyle = day
-					}else {
+          } else {
             this.cDayStyle = []
-					}
-				},
-				deep:true,
-				immediate:true
-			},
-		},
+          }
+        },
+        deep : true,
+        immediate : true
+      }
+    },
     methods : {
       initData ( month ) {
         this.month = uppercase(month);
@@ -113,19 +129,21 @@
       },
       //当前月天数， 当前月第一天是星期几
       monthDay ( month ) {
-        this.year = new Date().getFullYear();
-        let months = month.toString().length == 1 ? '0' + (month + 1) : month + 1
-        let dayList = new Date(this.year, months, 0).getDate();
+				this.year = new Date().getFullYear();
+        let months = month.toString().length == 1 ? '0' + (month) : month
+				console.log(months)
+				let dayList = new Date(this.year, months, 0).getDate();
         this.currentDay = [];
         for ( let i = 0 ; i < dayList ; i++ ) {
           this.currentDay.push(i + 1)
         }
         //当前是几号
-        if(new Date().getMonth() + 1 == month){
+        if ( new Date().getMonth() + 1 == month ) {
           this.cDay = new Date().getDate();
-				}else {
+          this.currentRemark = this.cDay
+        } else {
           this.cDay = 0
-				}
+        }
         //计算上月最后一天是星期几
         this.$nextTick(() => {
           let day = new Date(this.year, month - 1).getDay();
@@ -133,7 +151,7 @@
           let itemEl = document.getElementsByClassName('y-list-item')[ 0 ]
           itemEl.style = `margin-left:${day * 14.28 + '%'};`
         })
-        let eMsg = {year : this.year, month : this.currentMonth}
+        let eMsg = { year : this.year, month : this.currentMonth }
         this.$emit('change', eMsg)
       },
       //点击前一月
@@ -144,7 +162,7 @@
 
         this.currentMonth--;
         this.initData(this.currentMonth);
-        let eMsg = {year : this.year, month : this.currentMonth}
+        let eMsg = { year : this.year, month : this.currentMonth }
         this.$emit('change', eMsg)
       },
       //点击后一月
@@ -155,7 +173,7 @@
 
         this.currentMonth++;
         this.initData(this.currentMonth);
-        let eMsg = {year : this.year, month : this.currentMonth}
+        let eMsg = { year : this.year, month : this.currentMonth }
         this.$emit('change', eMsg)
       },
 
@@ -175,15 +193,19 @@
           }
         }
       },
-			//圆点显示
-      showCircle(item){
+      //圆点显示
+      showCircle ( item ) {
         for ( let i = 0 ; i < this.cDayStyle.length ; i++ ) {
           const cDayStyleElement = this.cDayStyle[ i ];
           if ( cDayStyleElement.active == item ) {
             return true
           }
         }
-			},
+      },
+      //点击日历
+      handleChangeItem ( item ) {
+        this.currentRemark = item
+      }
     },
     mounted () {
     },
