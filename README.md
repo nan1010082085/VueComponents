@@ -1,5 +1,8 @@
 # vue-components
 vue组件
+> 20190423
+
+    * 修复 CustomCalendar 日历组件月份问题
 > 20190320
 
     * 增加 loader 加载进度条组件
