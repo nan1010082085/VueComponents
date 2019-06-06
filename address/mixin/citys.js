@@ -10,7 +10,6 @@ export default {
       citys_currentSweep:0,  //移动起始距离
       citys_sweep:0,  //计算一次移动是几个元素位
       citys_currentTop:0,
-  
       citys_currentIndex:0,
       citys_updown:false,
     }
@@ -18,10 +17,10 @@ export default {
   methods:{
     initCity(scrolllElm,setCheck){
       let that = this;
-      setTimeout(()=>{
+      // setTimeout(()=>{
         // console.log(that.$refs[ 'item-active' ].offsetTop);
         that.citys_initTop = that.$refs[ 'item-active' ].offsetTop - that.$refs['header'].offsetHeight;
-        that.citys_transformY = Math.round(that.$refs[ 'item-active' ].offsetHeight)
+        that.citys_transformY = Math.round(that.$refs[ 'item-active' ].offsetHeight) - 2
   
         if(setCheck){
           that.citys_currentSweep = that.citys_initTop;
@@ -45,7 +44,7 @@ export default {
             }
           })
         }
-      },0)
+      // },0)
     },
     handleItemStartCity(e,r){
       this.citys_currentItem = document.querySelector(`.${r}`).getAttribute('parent')

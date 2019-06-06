@@ -10,7 +10,6 @@ export default {
       countys_currentSweep:0,  //移动起始距离
       countys_sweep:0,  //计算一次移动是几个元素位
       countys_currentTop:0,
-  
       countys_currentIndex:0,
       countys_updown:false
     }
@@ -18,9 +17,9 @@ export default {
   methods:{
     initCounty(scrolllElm,setCheck){
       let that = this;
-      setTimeout(()=>{
+      // setTimeout(()=>{
         that.countys_initTop = that.$refs[ 'item-active' ].offsetTop - that.$refs['header'].offsetHeight;
-        that.countys_transformY = Math.round(that.$refs[ 'item-active' ].offsetHeight)
+        that.countys_transformY = Math.round(that.$refs[ 'item-active' ].offsetHeight) - 2
         if(setCheck){
           that.countys_currentSweep = that.countys_initTop;
           that.setTranslate(that.$refs[scrolllElm],that.countys_initTop)
@@ -42,7 +41,7 @@ export default {
             }
           })
         }
-      },0)
+      // },0)
     },
     handleItemStartCounty(e,r){
       this.countys_currentItem = document.querySelector(`.${r}`).getAttribute('parent')

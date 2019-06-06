@@ -10,7 +10,6 @@ export default {
       streets_currentSweep:0,  //移动起始距离
       streets_sweep:0,  //计算一次移动是几个元素位
       streets_currentTop:0,
-  
       streets_currentIndex:0,
       streets_updown:false
     }
@@ -19,10 +18,10 @@ export default {
     initStreet(scrolllElm,setCheck){
       
       let that = this;
-      setTimeout(()=>{
+      // setTimeout(()=>{
         // console.log(that.$refs[ 'item-active' ].offsetTop);
         that.streets_initTop = that.$refs[ 'item-active' ].offsetTop - that.$refs['header'].offsetHeight;
-        that.streets_transformY = Math.round(that.$refs[ 'item-active' ].offsetHeight)
+        that.streets_transformY = Math.round(that.$refs[ 'item-active' ].offsetHeight) - 2
         
         if(setCheck){
           that.streets_currentSweep = that.streets_initTop;
@@ -45,7 +44,7 @@ export default {
             }
           })
         }
-      },0)
+      // },0)
     },
     handleItemStartStreet(e,r){
       this.streets_currentItem = document.querySelector(`.${r}`).getAttribute('parent')

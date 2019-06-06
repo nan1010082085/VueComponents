@@ -1,3 +1,4 @@
+<!--地址选择组件-->
 <template>
 	<div class="address-ganged" v-show="visibilityShow">
 		<div class="address-model"
@@ -6,11 +7,11 @@
 		<div
 			class="address-container"
 			:class="[visibilityShow ? 'address-show' : '']">
-			<div class="list-warp-header" :style="`${isAndroid ? styleCss[2]: ''}`" ref="header">
+			<div class="list-warp-header" :style="`${isAndroid ? styleCss[2]: ''}`"  ref="header">
 				<div class="list-header-item-ctn">
 					<div class="item-ctn" v-for="(item,index) in activeData" :key="index">{{item?item.value : ''}}</div>
 				</div>
-				<div class="list-header-item confirm" :style="`color:${color};`" @click="handleConfirm">
+				<div class="list-header-item confirm"  :style="`color:${color};`" @click="handleConfirm">
 					确定
 				</div>
 			</div>
@@ -27,7 +28,7 @@
 							 v-for="(item,index) in provinces"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}"
+							 :class="{'list-warp-item__active btn-scale':item.isCheck}"
 							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
@@ -43,7 +44,7 @@
 							 v-for="(item,index) in citys"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}"
+							 :class="{'list-warp-item__active btn-scale':item.isCheck}"
 							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
@@ -59,7 +60,7 @@
 							 v-for="(item,index) in countys"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}"
+							 :class="{'list-warp-item__active btn-scale':item.isCheck}"
 							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
@@ -75,7 +76,7 @@
 							 v-for="(item,index) in streets"
 							 :index="index"
 							 :key="index"
-							 :class="{'list-warp-item__active':item.isCheck}"
+							 :class="{'list-warp-item__active btn-scale':item.isCheck}"
 							 :style="`${isAndroid ? styleCss[4]: ''}`">
 						{{item.value}}
 					</div>
@@ -91,7 +92,7 @@
   import citys           from './mixin/citys'
   import countys         from './mixin/countys'
   import streets         from './mixin/streets'
-  import { extendClone } from "./util/util";
+  import { extendClone } from "./utils";
 
   export default {
     components : {},
@@ -122,15 +123,17 @@
         isEditStart : false, //控制默认选中第一次 以确保选中样式生效
 
         saveValueData : null,
-        //判断android 修改固定样式
-        isAndroid : false,
-        styleCss : [
-          `height:44px;position:absolute;z-index:-1;`,
-          `position:absolute;z-index:-1;`,
-          `height: 50px;line-height: 50px`,
-          `height: calc(50vh - 50px);`,
-          `height: 44px;line-height: 44px;`
-        ]
+				Inter:'',
+				Timer:'',
+
+				isAndroid : false,
+				styleCss : [
+					`height:44px;position:absolute;z-index:-1;`,
+					`position:absolute;z-index:-1;`,
+					`height: 50px;line-height: 50px`,
+					`height: calc(50vh - 50px);`,
+					`height: 44px;line-height: 44px;`
+				]
       }
     },
     props : {
@@ -182,9 +185,9 @@
               this.saveValueData = extendClone(org)
               this.isEditStart = true
               let provine = new Promise(( resolve ) => {
-							 let Inter = 	setInterval(()=>{
+							 this.Inter = setInterval(()=>{
                   if (this.provinces.length > 0 && Object.getOwnPropertyNames(this.saveValueData).length > 1) {
-                    clearInterval(Inter)
+                    clearInterval(this.Inter)
                     return resolve(true)
                   }
 								},5)
@@ -410,14 +413,10 @@
       },
       init ( scrolllElm, setCheck ) {
         let that = this;
-        setTimeout(() => {
-          // console.log(that.$refs[ 'item-active' ].offsetTop);
-          //that.$refs[ 'item-active' ].offsetTop - that.$refs['header'].offsetHeight
+        // setTimeout(() => {
           that.initTop = that.$refs[ 'item-active' ].offsetTop - that.$refs[ 'header' ].offsetHeight;
-          that.transformY = that.$refs[ 'item-active' ].offsetHeight
-
-          // console.log(that.initTop);
-          // console.log(that.transformY);
+					// console.log(that.initTop)
+					that.transformY = that.$refs[ 'item-active' ].offsetHeight - 2
           //每次选框显示时 控制元素位置
           if ( setCheck ) {
             that.currentSweep = that.initTop;
@@ -425,27 +424,30 @@
             that.$set(that[ `${scrolllElm}s` ][ 0 ], 'isCheck', true)
             that.setActiveData(scrolllElm, 0)
           } else {
-            that[ `${scrolllElm}s` ].forEach(( data, index ) => {
-              if ( data.isCheck ) {
-                that.currentSweep = that.initTop - (index * that.transformY);
-                that.setTranslate(that.$refs[ scrolllElm ], that.initTop - (index * that.transformY))
-                that.setActiveData(scrolllElm, index)
-              }
-            })
+						if(this.activeData.length<=0){//没有选中时 只移动第一位位置
+							that.currentSweep = that.initTop - (0 * that.transformY);
+							that.setTranslate(that.$refs[ scrolllElm ], that.initTop - (0 * that.transformY))
+						}else {
+							that[ `${scrolllElm}s` ].forEach(( data, index ) => {
+								if ( data.isCheck ) {
+									that.currentSweep = that.initTop - (index * that.transformY);
+									that.setTranslate(that.$refs[ scrolllElm ], that.initTop - (index * that.transformY))
+									that.setActiveData(scrolllElm, index)
+								}
+							})
+						}
           }
-        }, 0)
+        // }, 0)
       },
       setTranslate ( el, xs ) {
         try {
-          el.style = `transform:translate3d(0,${xs}px,0);transition:transform 300ms linear;`
+          el.style = `transform:translate3d(0,${xs}px,0);transition:all 300ms linear;`
         } catch ( e ) {
           // throw 'EL IS NOT'
         }
       },
       //数据操作回调
       setValueData ( org ) {
-        // console.info('执行获取数据', org)
-        // console.log(this.provinces)
         try {
           this.provinces.forEach(( item, index ) => {
             if ( item.id == org.provinceId ) {
@@ -455,64 +457,61 @@
             }
           })
         } catch ( e ) {
-          console.error(e)
+          console.error('地址数据获取失败 not get address list')
         }
       },
       //onchange
       setActiveData ( isArray, i ) {
         let index = Number(i);
-        // console.log(isArray,i);
         let that = this;
         let obj;
-
-        switch ( isArray ) {
-          case 'province':
-            this.$set(that.activeData, 0, that.provinces[ index ])
-            obj = {
-              id : that.provinces[ index ] ? that.provinces[ index ].id : '',
-              rag : that.activeData,
-              tag : 'province'
-            }
-            this.$emit('change', obj)
-            ;
-            break
-          case 'city':
-            this.$set(that.activeData, 1, that.city[ index ])
-            if ( that.city[ index ] ) {
-              obj = {
-                id : that.city[ index ] ? that.city[ index ].id : '',
-                rag : that.activeData,
-                tag : 'city'
-              }
-              this.$emit('change', obj)
-            }
-            ;
-            break
-          case 'county':
-            this.$set(that.activeData, 2, that.county[ index ])
-            if ( that.county[ index ] ) {
-              obj = {
-                id : that.county[ index ] ? that.county[ index ].id : '',
-                rag : that.activeData,
-                tag : 'county'
-              }
-              this.$emit('change', obj)
-            }
-            ;
-            break
-          case 'street':
-            this.$set(that.activeData, 3, that.street[ index ])
-            if ( that.street[ index ] ) {
-              obj = {
-                id : that.street[ index ] ? that.street[ index ].id : '',
-                rag : that.activeData,
-                tag : 'street'
-              }
-              this.$emit('change', obj)
-            }
-            ;
-            break
-        }
+				// clearTimeout(this.Timer)
+        // this.Timer = setTimeout(()=>{
+					switch ( isArray ) {
+						case 'province':
+							this.$set(that.activeData, 0, that.provinces[ index ])
+							obj = {
+								id : that.provinces[ index ] ? that.provinces[ index ].id : '',
+								rag : that.activeData,
+								tag : 'province'
+							}
+							this.$emit('change', obj);
+							break
+						case 'city':
+							this.$set(that.activeData, 1, that.city[ index ])
+							if ( that.city[ index ] ) {
+								obj = {
+									id : that.city[ index ] ? that.city[ index ].id : '',
+									rag : that.activeData,
+									tag : 'city'
+								}
+								this.$emit('change', obj)
+							};
+							break
+						case 'county':
+							this.$set(that.activeData, 2, that.county[ index ])
+							if ( that.county[ index ] ) {
+								obj = {
+									id : that.county[ index ] ? that.county[ index ].id : '',
+									rag : that.activeData,
+									tag : 'county'
+								}
+								this.$emit('change', obj)
+							};
+							break
+						case 'street':
+							this.$set(that.activeData, 3, that.street[ index ])
+							if ( that.street[ index ] ) {
+								obj = {
+									id : that.street[ index ] ? that.street[ index ].id : '',
+									rag : that.activeData,
+									tag : 'street'
+								}
+								this.$emit('change', obj)
+							};
+							break
+					}
+				// },50)
         // 300ms 返回一次数据
       },
       //touch
@@ -532,7 +531,7 @@
 
         this.setTranslate(parent, this.currentSweep + (this.sweep * this.transformY))
       },
-      handleItemEnd ( e, r, city, counts, stree ) {
+      handleItemEnd ( e, r) {
         let parent = document.querySelector(`.${r}`) //滚动元素
         let isZ = this.currentSweep < 0 ? -this.currentSweep : this.currentSweep; //取正直
         if ( this.updown ) {
@@ -557,8 +556,8 @@
           }
         }
       },
+			//click
       handleClick ( e, r, city, counts, stree ) {
-        // console.log('click', e.target)
         let parent = document.querySelector(`.${r}`) //滚动元素
         this[ `${r}s` ].map(data => {
           this.$set(data, 'isCheck', false)
@@ -579,8 +578,7 @@
         this.setActiveData(this.currentItem, Number(e.target.getAttribute('index'))) //调用回调返回数据
       }
     },
-    mounted () {
-    },
+    mounted () {},
     created () {
       let that = this;
       this.$nextTick(() => {
@@ -602,8 +600,8 @@
     beforeDestroy () {
       // console.info('addresslist 实例销毁前')
       this.reset();
+      clearInterval(this.Inter)
+      // clearTimeout(this.Timer)
     },
-    destroyed () {
-    }
   }
 </script>
