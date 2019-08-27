@@ -161,7 +161,6 @@
 		/**
 		 * @size --
 		 *        |- mini  最小不帶掩碼
-		 *        |- small 小号带掩码输入
 		 *        |- 默认 掩码独立 input
 		 */
 		@Prop({type: String, default: ''}) public placeholder!: string;
