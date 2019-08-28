@@ -8,7 +8,7 @@
 								ref="elInput1"
 								maxlength="3"
 								@input="handleInputChange($event, 1, mini)"
-								@keydown.native="handleKeyDown($event, 1)"
+								@keyup.native="handleKeyDown($event, 1)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<span>.</span>
@@ -17,8 +17,8 @@
 								ref="elInput2"
 								maxlength="3"
 								@input="handleInputChange($event, 2, mini)"
-								@keydown.native="handleKeyDown($event, 2)"
-								@keydown.native.delete="handleInputDelete(mini.ip2, 2)"
+								@keyup.native="handleKeyDown($event, 2)"
+								@keyup.native.delete="handleInputDelete(mini.ip2, 2)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<span>.</span>
@@ -27,8 +27,8 @@
 								ref="elInput3"
 								maxlength="3"
 								@input="handleInputChange($event, 3, mini)"
-								@keydown.native="handleKeyDown($event, 3)"
-								@keydown.native.delete="handleInputDelete(mini.ip3, 3)"
+								@keyup.native="handleKeyDown($event, 3)"
+								@keyup.native.delete="handleInputDelete(mini.ip3, 3)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<span>.</span>
@@ -37,7 +37,7 @@
 								ref="elInput4"
 								maxlength="3"
 								@input="handleInputChange($event, 2)"
-								@keydown.native.delete="handleInputDelete(mini.ip4, 4)"
+								@keyup.native.delete="handleInputDelete(mini.ip4, 4)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<div class="aim-ip-error-wrap">
@@ -64,7 +64,7 @@
 									ref="elInput2"
 									@input="handleInputChange($event, 2, aimAddress)"
 									@keyup.native="handleKeyDown($event, 2)"
-									@keydown.native.delete="handleInputDelete(aimAddress.ip2, 2)"
+									@keyup.native.delete="handleInputDelete(aimAddress.ip2, 2)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
@@ -74,7 +74,7 @@
 									ref="elInput3"
 									@input="handleInputChange($event, 3, aimAddress)"
 									@keyup.native="handleKeyDown($event, 3)"
-									@keydown.native.delete="handleInputDelete(aimAddress.ip3, 3)"
+									@keyup.native.delete="handleInputDelete(aimAddress.ip3, 3)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
@@ -83,7 +83,7 @@
 									class="aim-wrap-input"
 									ref="elInput4"
 									@input="handleInputChange($event, 4)"
-									@keydown.native.delete="handleInputDelete(aimAddress.ip4, 4)"
+									@keyup.native.delete="handleInputDelete(aimAddress.ip4, 4)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<div class="aim-ip-error-wrap">
@@ -325,7 +325,7 @@
 		}
 
 		/* 掩码验证 */
-		private handleCodeAimAddressBlur(e: any) {
+		private handleCodeAimAddressBlur(e?: any) {
 			let val = e ? e.target.value : '';
 			console.log(val);
 			if (val != '' && val.length <= 2) {
@@ -370,6 +370,7 @@
 
 		/* 子网ip输入时 */
 		private handleInputChange(ev: any, num: number, org: any) {
+			console.log(org);
 			if (num == 1) {
 				org.ip1 = ev.replace('.', '');
 				this.isInit = 'start';
@@ -392,6 +393,8 @@
 					return false;
 				}
 			}
+
+
 
 			this.handleIpAimAddressBlur();
 		}
@@ -443,6 +446,19 @@
 						return false;
 					}
 				}
+			}
+		}
+
+		private verify(size: string) {
+			if (size == 'mini') {
+				this.handleCodeMiniBlur();
+			} else if (size == 'ip') {
+				this.handleIpAimAddressBlur();
+			} else if (size == 'code') {
+				this.handleCodeAimAddressBlur();
+			} else {
+				this.handleIpAimAddressBlur();
+				this.handleCodeAimAddressBlur();
 			}
 		}
 	}
