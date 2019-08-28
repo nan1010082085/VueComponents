@@ -161,6 +161,7 @@
 		/**
 		 * @size --
 		 *        |- mini  最小不帶掩碼
+		 *        |- small 小号带掩码输入
 		 *        |- 默认 掩码独立 input
 		 */
 		@Prop({type: String, default: ''}) public placeholder!: string;
@@ -320,36 +321,24 @@
 				this.ipText = this.ipErrorText(str);
 			}
 
-			// if (this.aimAddress.code == '') {
-			// 	this.isCodeCheck = true;
-			// 	this.handleCodeAimAddressBlur('');
-			// }
-
 			this.handleChange();
 		}
 
 		/* 掩码验证 */
 		private handleCodeAimAddressBlur(e: any) {
 			let val = e ? e.target.value : '';
+			console.log(val);
 			if (val != '' && val.length <= 2) {
 				this.isCodeCheck = isMatchCode(Number(val)) ? false : true;
 				if (isMatchCode(Number(val))) {
 					this.aimAddress.code = isMatchCode(Number(val));
 				}
 			} else {
-				let isCheck = Object.values(getCode).includes(val);
+				let isCheck = Object.values(getCode).includes(this.aimAddress.code);
 				this.isCodeCheck = isCheck ? false : true;
 			}
 
 			this.keyCodeText = this.keyCodeErrorText(val);
-
-			// if (this.aimAddress.ip1 == ''
-			// 	|| this.aimAddress.ip2 == ''
-			// 	|| this.aimAddress.ip3 == ''
-			// 	|| this.aimAddress.ip4 == '') {
-			// 	this.isIpCheck = true;
-			// 	this.handleIpAimAddressBlur('');
-			// }
 
 			this.handleChange();
 		}
