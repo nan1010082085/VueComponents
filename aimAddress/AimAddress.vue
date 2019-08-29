@@ -326,8 +326,14 @@
 
 		/* 掩码验证 */
 		private handleCodeAimAddressBlur(e?: any) {
-			let val = e ? e.target.value : '';
-			console.log(val);
+			let val;
+			if (typeof e == 'string') {
+				val = e;
+			} else if (e.target) {
+				val = e.target.value;
+			} else {
+				val = '';
+			}
 			if (val != '' && val.length <= 2) {
 				this.isCodeCheck = isMatchCode(Number(val)) ? false : true;
 				if (isMatchCode(Number(val))) {
@@ -393,7 +399,6 @@
 					return false;
 				}
 			}
-
 
 
 			this.handleIpAimAddressBlur();
