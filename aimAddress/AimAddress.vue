@@ -8,7 +8,7 @@
 								ref="elInput1"
 								maxlength="3"
 								@input="handleInputChange($event, 1, mini)"
-								@keyup.native="handleKeyDown($event, 1)"
+								@keyup.native="handleKeyDown($event, 1, mini)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<span>.</span>
@@ -17,8 +17,8 @@
 								ref="elInput2"
 								maxlength="3"
 								@input="handleInputChange($event, 2, mini)"
-								@keyup.native="handleKeyDown($event, 2)"
-								@keyup.native.delete="handleInputDelete(mini.ip2, 2)"
+								@keyup.native="handleKeyDown($event, 2, mini)"
+								@keydown.native.delete="handleInputDelete(mini.ip2, 2)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<span>.</span>
@@ -27,8 +27,8 @@
 								ref="elInput3"
 								maxlength="3"
 								@input="handleInputChange($event, 3, mini)"
-								@keyup.native="handleKeyDown($event, 3)"
-								@keyup.native.delete="handleInputDelete(mini.ip3, 3)"
+								@keyup.native="handleKeyDown($event, 3, mini)"
+								@keydown.native.delete="handleInputDelete(mini.ip3, 3)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<span>.</span>
@@ -36,8 +36,8 @@
 								v-model="mini.ip4"
 								ref="elInput4"
 								maxlength="3"
-								@input="handleInputChange($event, 2)"
-								@keyup.native.delete="handleInputDelete(mini.ip4, 4)"
+								@input="handleInputChange($event, 2, mini)"
+								@keydown.native.delete="handleInputDelete(mini.ip4, 4)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
 			<div class="aim-ip-error-wrap">
@@ -54,7 +54,7 @@
 									class="aim-wrap-input"
 									ref="elInput1"
 									@input="handleInputChange($event, 1, aimAddress)"
-									@keyup.native="handleKeyDown($event, 1, aimAddress.ip1)"
+									@keyup.native="handleKeyDown($event, 1, aimAddress)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
@@ -63,8 +63,8 @@
 									class="aim-wrap-input"
 									ref="elInput2"
 									@input="handleInputChange($event, 2, aimAddress)"
-									@keyup.native="handleKeyDown($event, 2)"
-									@keyup.native.delete="handleInputDelete(aimAddress.ip2, 2)"
+									@keyup.native="handleKeyDown($event, 2, aimAddress)"
+									@keydown.native.delete="handleInputDelete(aimAddress.ip2, 2)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
@@ -73,8 +73,8 @@
 									class="aim-wrap-input"
 									ref="elInput3"
 									@input="handleInputChange($event, 3, aimAddress)"
-									@keyup.native="handleKeyDown($event, 3)"
-									@keyup.native.delete="handleInputDelete(aimAddress.ip3, 3)"
+									@keyup.native="handleKeyDown($event, 3, aimAddress)"
+									@keydown.native.delete="handleInputDelete(aimAddress.ip3, 3)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
@@ -82,8 +82,8 @@
 									v-model="aimAddress.ip4"
 									class="aim-wrap-input"
 									ref="elInput4"
-									@input="handleInputChange($event, 4)"
-									@keyup.native.delete="handleInputDelete(aimAddress.ip4, 4)"
+									@input="handleInputChange($event, 4, aimAddress)"
+									@keydown.native.delete="handleInputDelete(aimAddress.ip4, 4)"
 									size="mini"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<div class="aim-ip-error-wrap">
@@ -194,6 +194,7 @@
 		private keyCodeText: string = '';
 
 		private isInit: string = 'start';
+		private next: boolean = true;
 
 		@Watch('defValue')
 		private handleDefValue(ovl: string) {
@@ -329,7 +330,7 @@
 			let val;
 			if (typeof e == 'string') {
 				val = e;
-			} else if (e.target) {
+			} else if (e && e.target) {
 				val = e.target.value;
 			} else {
 				val = '';
@@ -376,7 +377,6 @@
 
 		/* 子网ip输入时 */
 		private handleInputChange(ev: any, num: number, org: any) {
-			console.log(org);
 			if (num == 1) {
 				org.ip1 = ev.replace('.', '');
 				this.isInit = 'start';
@@ -398,6 +398,8 @@
 					(this.$refs.elInput4 as HTMLInputElement).focus();
 					return false;
 				}
+			} else if (num == 4) {
+				org.ip4 = ev.replace('.', '');
 			}
 
 
@@ -430,28 +432,33 @@
 		}
 
 		/* 键盘按下. 时*/
-		private handleKeyDown(ev: any, num: number) {
-			if (ev.code == 'Period') {
+		private handleKeyDown(ev: any, num: number, org: any) {
+			if (ev.code == 'Period' && this.next) {
+				this.next = false;
 				if (num == 1) {
 					this.isInit = 'start';
-					if (this.isInit == 'start') {
+					if (this.isInit == 'start' && org.ip1 != '' && org.ip1.length < 3) {
 						(this.$refs.elInput2 as HTMLInputElement).focus();
 						return false;
 					}
 				} else if (num == 2) {
 					this.isInit = 'start';
-					if (this.isInit == 'start') {
+					if (this.isInit == 'start' && org.ip2 != '' && org.ip2.length < 3) {
 						(this.$refs.elInput3 as HTMLInputElement).focus();
 						return false;
 					}
 				} else if (num == 3) {
 					this.isInit = 'start';
-					if (this.isInit == 'start') {
+					if (this.isInit == 'start' && org.ip3 != '' && org.ip3.length < 3) {
 						(this.$refs.elInput4 as HTMLInputElement).focus();
 						return false;
 					}
 				}
 			}
+
+			setTimeout(() => {
+				this.next = true;
+			}, 100);
 		}
 
 		private verify(size: string) {
