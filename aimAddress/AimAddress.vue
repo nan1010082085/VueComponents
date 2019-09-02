@@ -36,7 +36,7 @@
 								v-model="mini.ip4"
 								ref="elInput4"
 								maxlength="3"
-								@input="handleInputChange($event, 2, mini)"
+								@input="handleInputChange($event, 4, mini)"
 								@keydown.native.delete="handleInputDelete(mini.ip4, 4)"
 								@blur="handleCodeMiniBlur"
 								size="mini"></el-input>
