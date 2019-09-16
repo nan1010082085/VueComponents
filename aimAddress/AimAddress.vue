@@ -99,7 +99,6 @@
 									class="aim-wrap-input-right"
 									size="small"
 									:placeholder="placeholder"
-									@input="handleCodeAimAddressBlur"
 									@blur="handleCodeAimAddressBlur"></el-input>
 				<div class="aim-ip-error-wrap">
 					<transition name="slide-fade">
@@ -116,7 +115,7 @@
 
 	/* 匹配子网掩码 */
 	let getCode: any = {
-		0: '0',
+		0: '0.0.0.0',
 		1: '128.0.0.0',
 		2: '192.0.0.0',
 		3: '224.0.0.0',
@@ -433,7 +432,8 @@
 
 		/* 键盘按下. 时*/
 		private handleKeyDown(ev: any, num: number, org: any) {
-			if (ev.code == 'Period' && this.next) {
+			// console.log(ev);
+			if (ev.code == 'Period' && this.next || ev.key == '.' && this.next) {
 				this.next = false;
 				if (num == 1) {
 					this.isInit = 'start';
@@ -475,4 +475,83 @@
 		}
 	}
 </script>
+<style scoped lang="less">
+	.aim {
+		display: flex;
+		align-items: center;
+
+		.aim-wrap-input-right {
+			height: 33px !important;
+			line-height: 33px;
+
+			.el-input__inner {
+				height: 33px !important;
+				line-height: 33px;
+			}
+		}
+	}
+
+	.error {
+		.el-input__inner {
+			border: 1px solid #FE6666 !important;
+		}
+	}
+
+	.aim-wrap {
+		display: flex;
+		align-items: center;
+		.el-input {
+			flex-basis: 23.5%;
+			height: 32px !important;
+
+			.el-input__inner {
+				border: none !important;
+				padding: 0 5px;
+			}
+		}
+	}
+
+	.aim-wrap {
+		width: 195px;
+		border-radius: 4px;
+		box-sizing: border-box;
+		border: 1px solid #DCDFE6;
+		height: 32px;
+		line-height: 32px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.aim-address-right-item {
+		width: 195px;
+
+		.aim-wrap-input-right {
+			width: 100%;
+		}
+	}
+
+	.aim-address-left-item, .aim-address-right-item {
+		position: relative;
+	}
+
+	.aim-ip-error-wrap {
+		position: absolute;
+		left: 0;
+		top: 32px;
+		height: 18px;
+		line-height: 1;
+		overflow: hidden;
+	}
+
+	.error-border {
+		border: 1px solid #FE6666;
+	}
+
+	.aim-ip-error-text {
+		display: inline-block;
+		color: #FE6666;
+		font-size: 12px;
+		line-height: 1;
+	}
+</style>
 
