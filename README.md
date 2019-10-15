@@ -1,6 +1,9 @@
 # vue-components
 vue组件
-> 20190423
+> 20191015
+
+    * 更新Aim组件样式以less 可改scss文件
+> 20190723
 
     * 修改 AddressList 组件 样式为定值 适用移动端 fz定义100px --> rem 转换 1*100 兼容ios与安卓微信浏览器
     * 增加 步进器组件 inputNumber

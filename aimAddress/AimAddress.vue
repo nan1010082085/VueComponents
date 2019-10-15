@@ -2,11 +2,12 @@
 	<div>
 		<div v-if="size == 'mini'"
 				 class="aim-wrap aim-address-left-item"
-				 :class="{'error-border': isIpCheck}">
+				 :class="{'error-border': isIpCheck, 'aim-disabled': disabled}">
 			<el-input class="aim-address-item"
 								v-model="mini.ip1"
 								ref="elInput1"
 								maxlength="3"
+								:disabled="disabled"
 								@input="handleInputChange($event, 1, mini)"
 								@keyup.native="handleKeyDown($event, 1, mini)"
 								@blur="handleCodeMiniBlur"
@@ -16,6 +17,7 @@
 								v-model="mini.ip2"
 								ref="elInput2"
 								maxlength="3"
+								:disabled="disabled"
 								@input="handleInputChange($event, 2, mini)"
 								@keyup.native="handleKeyDown($event, 2, mini)"
 								@keydown.native.delete="handleInputDelete(mini.ip2, 2)"
@@ -26,6 +28,7 @@
 								v-model="mini.ip3"
 								ref="elInput3"
 								maxlength="3"
+								:disabled="disabled"
 								@input="handleInputChange($event, 3, mini)"
 								@keyup.native="handleKeyDown($event, 3, mini)"
 								@keydown.native.delete="handleInputDelete(mini.ip3, 3)"
@@ -36,6 +39,7 @@
 								v-model="mini.ip4"
 								ref="elInput4"
 								maxlength="3"
+								:disabled="disabled"
 								@input="handleInputChange($event, 4, mini)"
 								@keydown.native.delete="handleInputDelete(mini.ip4, 4)"
 								@blur="handleCodeMiniBlur"
@@ -48,7 +52,7 @@
 		</div>
 		<div v-else class="aim">
 			<div class="aim-wrap aim-address-left-item"
-					 :class="{'error-border': isIpCheck}">
+					 :class="{'error-border': isIpCheck,'aim-disabled': disabled}">
 				<el-input maxlength="3"
 									v-model="aimAddress.ip1"
 									class="aim-wrap-input"
@@ -56,6 +60,7 @@
 									@input="handleInputChange($event, 1, aimAddress)"
 									@keyup.native="handleKeyDown($event, 1, aimAddress)"
 									size="mini"
+									:disabled="disabled"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
 				<el-input maxlength="3"
@@ -66,6 +71,7 @@
 									@keyup.native="handleKeyDown($event, 2, aimAddress)"
 									@keydown.native.delete="handleInputDelete(aimAddress.ip2, 2)"
 									size="mini"
+									:disabled="disabled"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
 				<el-input maxlength="3"
@@ -76,6 +82,7 @@
 									@keyup.native="handleKeyDown($event, 3, aimAddress)"
 									@keydown.native.delete="handleInputDelete(aimAddress.ip3, 3)"
 									size="mini"
+									:disabled="disabled"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<span>.</span>
 				<el-input maxlength="3"
@@ -85,6 +92,7 @@
 									@input="handleInputChange($event, 4, aimAddress)"
 									@keydown.native.delete="handleInputDelete(aimAddress.ip4, 4)"
 									size="mini"
+									:disabled="disabled"
 									@blur="handleIpAimAddressBlur"></el-input>
 				<div class="aim-ip-error-wrap">
 					<transition name="slide-fade">
@@ -98,6 +106,7 @@
 									:class="{'error': isCodeCheck}"
 									class="aim-wrap-input-right"
 									size="small"
+									:disabled="disabled"
 									:placeholder="placeholder"
 									@blur="handleCodeAimAddressBlur"></el-input>
 				<div class="aim-ip-error-wrap">
@@ -166,6 +175,7 @@
 		@Prop({type: String, default: ''}) public placeholder!: string;
 		@Prop({type: String, default: ''}) public defValue!: string;
 		@Prop({type: String, default: ''}) public size!: string;
+		@Prop({type: Boolean, default: false}) public disabled!: boolean;
 
 
 		private mini: any = {
@@ -374,8 +384,29 @@
 			this.resetFiles();
 		}
 
+		private clearModel(num: number, org: any) {
+			switch (num) {
+				case 1:
+					org.ip1 = '';
+					break;
+				case 2:
+					org.ip2 = '';
+					break;
+				case 3:
+					org.ip3 = '';
+					break;
+				case 4:
+					org.ip4 = '';
+					break;
+			}
+		}
+
 		/* 子网ip输入时 */
 		private handleInputChange(ev: any, num: number, org: any) {
+			if (isNaN(ev)) {
+				this.clearModel(num, org);
+				return false;
+			}
 			if (num == 1) {
 				org.ip1 = ev.replace('.', '');
 				this.isInit = 'start';
@@ -432,8 +463,8 @@
 
 		/* 键盘按下. 时*/
 		private handleKeyDown(ev: any, num: number, org: any) {
-			// console.log(ev);
-			if (ev.code == 'Period' && this.next || ev.key == '.' && this.next) {
+			console.log(ev);
+			if (ev.code == 'Period' && this.next || ev.key == '.' && this.next || ev.keyCode == 190 && this.next || ev.key == 'Decimal' && this.next || ev.keyCode == 110 && this.next) {
 				this.next = false;
 				if (num == 1) {
 					this.isInit = 'start';
@@ -475,83 +506,8 @@
 		}
 	}
 </script>
-<style scoped lang="less">
-	.aim {
-		display: flex;
-		align-items: center;
 
-		.aim-wrap-input-right {
-			height: 33px !important;
-			line-height: 33px;
-
-			.el-input__inner {
-				height: 33px !important;
-				line-height: 33px;
-			}
-		}
-	}
-
-	.error {
-		.el-input__inner {
-			border: 1px solid #FE6666 !important;
-		}
-	}
-
-	.aim-wrap {
-		display: flex;
-		align-items: center;
-		.el-input {
-			flex-basis: 23.5%;
-			height: 32px !important;
-
-			.el-input__inner {
-				border: none !important;
-				padding: 0 5px;
-			}
-		}
-	}
-
-	.aim-wrap {
-		width: 195px;
-		border-radius: 4px;
-		box-sizing: border-box;
-		border: 1px solid #DCDFE6;
-		height: 32px;
-		line-height: 32px;
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.aim-address-right-item {
-		width: 195px;
-
-		.aim-wrap-input-right {
-			width: 100%;
-		}
-	}
-
-	.aim-address-left-item, .aim-address-right-item {
-		position: relative;
-	}
-
-	.aim-ip-error-wrap {
-		position: absolute;
-		left: 0;
-		top: 32px;
-		height: 18px;
-		line-height: 1;
-		overflow: hidden;
-	}
-
-	.error-border {
-		border: 1px solid #FE6666;
-	}
-
-	.aim-ip-error-text {
-		display: inline-block;
-		color: #FE6666;
-		font-size: 12px;
-		line-height: 1;
-	}
+<style scoped>
+	@import "./aimLess.less";
 </style>
 
