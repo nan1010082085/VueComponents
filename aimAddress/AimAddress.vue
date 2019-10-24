@@ -121,6 +121,7 @@
 
 <script lang="ts">
 	import {Component, Emit, Prop, Vue, Watch} from 'vue-property-decorator';
+	import {isStrNull} from './mixins';
 
 	/* 匹配子网掩码 */
 	let getCode: any = {
@@ -171,11 +172,16 @@
 		 *        |- mini  最小不帶掩碼
 		 *        |- small 小号带掩码输入
 		 *        |- 默认 掩码独立 input
+		 *
+		 * errText ipv4文案提示
+		 * isRegex 首位0判断
 		 */
 		@Prop({type: String, default: ''}) public placeholder!: string;
 		@Prop({type: String, default: ''}) public defValue!: string;
 		@Prop({type: String, default: ''}) public size!: string;
 		@Prop({type: Boolean, default: false}) public disabled!: boolean;
+		@Prop({type: String, default: 'IPv4'}) public errText!: boolean;
+		@Prop({type: Boolean, default: false}) public isRegex!: boolean;
 
 
 		private mini: any = {
@@ -198,6 +204,10 @@
 		private isIpCheck: boolean = false;
 		private ipText: string = '';
 		private regex = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+		/* 判断00开始*/
+		private regex2 = /^(00)|(00)\d$/;
+		/* 判断0开始*/
+		private regex3 = /^(0)|(0)\d$/;
 		/* code data */
 		private isCodeCheck: boolean = false;
 		private keyCodeText: string = '';
@@ -218,6 +228,7 @@
 						ip4: ipList[3],
 						code: arr[1],
 					};
+					this.handleIpAimAddressBlur();
 				} else if (this.size == 'mini' && this.mini.ip1 == '') {
 					let ipList = ovl.split('.');
 					this.mini = {
@@ -226,6 +237,7 @@
 						ip3: ipList[2],
 						ip4: ipList[3],
 					};
+					this.handleCodeMiniBlur();
 				}
 			}
 		}
@@ -234,18 +246,18 @@
 		private handleChange() {
 			let str: string = '';
 			if (this.size == 'mini') {
-				for (const mini in this.mini) {
-					if (this.mini[mini] != '') {
-						if (mini !== 'code' && mini !== 'ip4') {
-							str += this.mini[mini] + '.';
+				for (const mi in this.mini) {
+					if (!isStrNull(this.mini[mi])) {
+						if (mi !== 'code' && mi !== 'ip4') {
+							str += this.mini[mi] + '.';
 						} else {
-							str += this.mini[mini];
+							str += this.mini[mi];
 						}
 					}
 				}
 			} else {
 				for (const aimAddress in this.aimAddress) {
-					if (this.aimAddress[aimAddress] != '') {
+					if (!isStrNull(this.aimAddress[aimAddress])) {
 						if (aimAddress !== 'code' && aimAddress !== 'ip4') {
 							str += this.aimAddress[aimAddress] + '.';
 						} else if (aimAddress === 'code') {
@@ -273,9 +285,9 @@
 
 		private ipErrorText(str: string): any {
 			if (str == '') {
-				return 'IPv4地址参数不能为空';
+				return `${this.errText}地址参数不能为空`;
 			} else {
-				return 'IPv4地址格式错误';
+				return `${this.errText}地址格式错误`;
 			}
 		}
 
@@ -294,17 +306,21 @@
 		/* 验证ip输入 */
 		private handleCodeMiniBlur() {
 			let str: string = '';
-			for (const mini in this.mini) {
-				if (this.mini[mini] != '') {
-					if (mini !== 'code' && mini !== 'ip4') {
-						str += this.mini[mini] + '.';
+			let isVerify: boolean = false;
+			for (let mi in this.mini) {
+				if (this.mini[mi] != '') {
+					if (this.isRegex && this.regex3.test(this.mini[mi])) {
+						isVerify = true;
+					}
+					if (mi !== 'code' && mi !== 'ip4') {
+						str += this.mini[mi] + '.';
 					} else {
-						str += this.mini[mini];
+						str += this.mini[mi];
 					}
 				}
 			}
 
-			this.isIpCheck = !this.regex.test(str);
+			this.isIpCheck = !this.regex.test(str) || isVerify;
 			if (this.isIpCheck) {
 				this.ipText = this.ipErrorText(str);
 			} else {
@@ -317,8 +333,13 @@
 		/* aim address */
 		private handleIpAimAddressBlur() {
 			let str: string = '';
+			let isVerify: boolean = false;
 			for (const aimAddress in this.aimAddress) {
 				if (this.aimAddress[aimAddress] != '') {
+					if (this.isRegex && this.regex3.test(this.aimAddress[aimAddress])) {
+						isVerify = true;
+					}
+
 					if (aimAddress !== 'code' && aimAddress !== 'ip4') {
 						str += this.aimAddress[aimAddress] + '.';
 					} else if (aimAddress !== 'code') {
@@ -326,7 +347,8 @@
 					}
 				}
 			}
-			this.isIpCheck = !this.regex.test(str);
+
+			this.isIpCheck = !this.regex.test(str) || isVerify;
 			if (this.isIpCheck) {
 				this.ipText = this.ipErrorText(str);
 			}
@@ -380,7 +402,6 @@
 		}
 
 		private beforeDestroy(): void {
-			console.log('卸载 aimAddress');
 			this.resetFiles();
 		}
 
@@ -463,7 +484,6 @@
 
 		/* 键盘按下. 时*/
 		private handleKeyDown(ev: any, num: number, org: any) {
-			console.log(ev);
 			if (ev.code == 'Period' && this.next || ev.key == '.' && this.next || ev.keyCode == 190 && this.next || ev.key == 'Decimal' && this.next || ev.keyCode == 110 && this.next) {
 				this.next = false;
 				if (num == 1) {
@@ -507,7 +527,7 @@
 	}
 </script>
 
-<style scoped>
-	@import "./aimLess.less";
+<style lang="less">
+	@import "./aimLess";
 </style>
 

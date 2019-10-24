@@ -1,5 +1,10 @@
 # vue-components
 vue组件
+> 20191024
+
+    * 更新Aim组件
+    * Aim校验 支持首位非0判断 可选默认不判断
+    * Aim校验 文案IPV4ZZ支持可配置 默认ipv4
 > 20191015
 
     * 更新Aim组件样式以less 可改scss文件
